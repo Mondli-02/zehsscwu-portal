@@ -1,6 +1,7 @@
-// Utility functions
+// ============================================
+// OPTION 1: Spinning Union Logo with Pulse
+// ============================================
 function showLoading() {
-    // Create loading overlay
     const loading = document.createElement('div');
     loading.id = 'loadingOverlay';
     loading.style.cssText = `
@@ -9,83 +10,76 @@ function showLoading() {
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(255, 255, 255, 0.95);
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.95), rgba(220, 38, 38, 0.95));
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         z-index: 9999;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        backdrop-filter: blur(10px);
     `;
 
     loading.innerHTML = `
-        <div class="windows-loader">
-            <div class="dot red"></div>
-            <div class="dot blue"></div>
-            <div class="dot black"></div>
+        <div class="union-logo-loader">
+            <div class="logo-ring"></div>
+            <div class="logo-center">
+                <span style="color: white; font-size: 2rem; font-weight: bold;">Z</span>
+            </div>
         </div>
-        <div style="margin-top: 20px; color: #2563eb; font-weight: 500;">Loading...</div>
+        <div style="margin-top: 30px; color: white; font-weight: 600; font-size: 1.2rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+            Loading.....
+        </div>
     `;
 
     document.body.appendChild(loading);
 
-    // Add CSS for the loader
     const style = document.createElement('style');
     style.textContent = `
-        .windows-loader {
+        .union-logo-loader {
+            position: relative;
+            width: 100px;
+            height: 100px;
+        }
+        
+        .logo-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 6px solid rgba(255, 255, 255, 0.3);
+            border-top: 6px solid white;
+            border-radius: 50%;
+            animation: spinLogo 1s linear infinite;
+        }
+        
+        .logo-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
             display: flex;
-            gap: 8px;
             align-items: center;
             justify-content: center;
+            animation: pulse 2s ease-in-out infinite;
+            backdrop-filter: blur(5px);
         }
         
-        .dot {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            animation: bounce 1.4s infinite ease-in-out both;
+        @keyframes spinLogo {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
-        .red {
-            background: #dc2626;
-            animation-delay: -0.32s;
-        }
-        
-        .blue {
-            background: #2563eb;
-            animation-delay: -0.16s;
-        }
-        
-        .black {
-            background: #1e293b;
-        }
-        
-        @keyframes bounce {
-            0%, 80%, 100% {
-                transform: scale(0.8);
-                opacity: 0.5;
-            }
-            40% {
-                transform: scale(1.2);
+        @keyframes pulse {
+            0%, 100% { 
+                transform: translate(-50%, -50%) scale(1);
                 opacity: 1;
             }
-        }
-        
-        /* Alternative wave animation */
-        .windows-loader.wave {
-            gap: 6px;
-        }
-        
-        .windows-loader.wave .dot {
-            animation: wave 1.2s infinite ease-in-out both;
-        }
-        
-        @keyframes wave {
-            0%, 60%, 100% {
-                transform: translateY(0);
-            }
-            30% {
-                transform: translateY(-10px);
+            50% { 
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 0.8;
             }
         }
     `;
@@ -96,13 +90,14 @@ function showLoading() {
 function hideLoading() {
     const loading = document.getElementById('loadingOverlay');
     if (loading) {
-        loading.remove();
+        loading.style.opacity = '0';
+        loading.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => loading.remove(), 300);
     }
 
-    // Also remove the style element we added
     const styles = document.querySelectorAll('style');
     styles.forEach(style => {
-        if (style.textContent.includes('windows-loader')) {
+        if (style.textContent.includes('union-logo-loader')) {
             style.remove();
         }
     });
@@ -116,13 +111,11 @@ function showSuccess(message) {
     alert('Success: ' + message);
 }
 
-// Format date
 function formatDate(dateString) {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString();
 }
 
-// Debounce function for search
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -133,91 +126,4 @@ function debounce(func, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
     };
-}
-
-// Optional: Alternative loader style with wave animation
-function showLoadingWave() {
-    const loading = document.createElement('div');
-    loading.id = 'loadingOverlay';
-    loading.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.95);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    `;
-
-    loading.innerHTML = `
-        <div class="windows-loader wave">
-            <div class="dot red"></div>
-            <div class="dot blue"></div>
-            <div class="dot black"></div>
-        </div>
-        <div style="margin-top: 20px; color: #2563eb; font-weight: 500;">Loading...</div>
-    `;
-
-    document.body.appendChild(loading);
-
-    // Add CSS for the wave loader
-    const style = document.createElement('style');
-    style.textContent = `
-        .windows-loader {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .windows-loader.wave {
-            gap: 6px;
-        }
-        
-        .dot {
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-        }
-        
-        .red {
-            background: #f51a1aff;
-        }
-        
-        .blue {
-            background: #0553fcff;
-        }
-        
-        .black {
-            background: #000000ff;
-        }
-        
-        .windows-loader.wave .dot {
-            animation: wave 1.2s infinite ease-in-out both;
-        }
-        
-        .windows-loader.wave .dot.red {
-            animation-delay: -0.32s;
-        }
-        
-        .windows-loader.wave .dot.blue {
-            animation-delay: -0.16s;
-        }
-        
-        @keyframes wave {
-            0%, 60%, 100% {
-                transform: translateY(0);
-            }
-            30% {
-                transform: translateY(-10px);
-            }
-        }
-    `;
-
-    document.head.appendChild(style);
 }
