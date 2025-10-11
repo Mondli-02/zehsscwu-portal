@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Member Portal - ZEHSSCWU</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png" />
+    <link rel="manifest" href="assets/images/site.webmanifest" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header style="background: var(--primary); color: white; padding: 16px 0">
+      <div class="container">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <h1>ZEHSSCWU Member Portal</h1>
+          <div style="display: flex; align-items: center; gap: 16px">
+            <span class="welcome-board" id="memberWelcome"
+              >Welcome, Member</span
+            >
+            <button class="btn btn-primary" onclick="logout()">Logout</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container" style="margin-top: 24px">
+      <!-- Tabs Navigation -->
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('profile')">Profile</div>
+        <div class="tab" onclick="switchTab('worksCouncil')">
+          Works Council & Committee
+        </div>
+        <div class="tab" onclick="switchTab('updateProfile')">
+          Update Profile
+        </div>
+        <div class="tab" onclick="switchTab('unionTools')">Union Tools</div>
+      </div>
+
+      <!-- Profile Tab -->
+      <div id="profile" class="tab-content active">
+        <div class="card">
+          <h2 style="margin-bottom: 20px; color: var(--primary)">
+            Member Profile
+          </h2>
+
+          <div class="info-card">
+            <div class="info-row">
+              <span class="info-label">Member ID</span>
+              <span class="info-value" id="profileMemberId">-</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Full Name</span>
+              <span class="info-value" id="profileFullName">-</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Institution</span>
+              <span class="info-value" id="profileInstitution">-</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">National ID</span>
+              <span class="info-value" id="profileNationalId">-</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Date of Birth</span>
+              <span class="info-value" id="profileDob">-</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Gender</span>
+              <span class="info-value" id="profileGender">-</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Job Title</span>
+              <span class="info-value" id="profileJobTitle">-</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Date Joined</span>
+              <span class="info-value" id="profileDateJoined">-</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Grade</span>
+              <span class="info-value" id="profileGrade">-</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Contact Number</span>
+              <span class="info-value" id="profileContact">-</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Status</span>
+              <span class="info-value" id="profileStatus">-</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Position in Union</span>
+              <span class="info-value" id="profilePosition">-</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Branch</span>
+              <span class="info-value" id="profileBranch">-</span>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" onclick="switchTab('updateProfile')">
+            Update Profile
+          </button>
+        </div>
+      </div>
+
+      <!-- Works Council & Committee Tab -->
+      <div id="worksCouncil" class="tab-content">
+        <div class="card">
+          <h2 style="margin-bottom: 20px; color: var(--primary)">
+            Works Council & Committee
+          </h2>
+
+          <!-- Works Council Section -->
+          <div style="margin-bottom: 32px">
+            <h3 style="margin-bottom: 16px; color: var(--secondary)">
+              Works Council
+            </h3>
+            <div id="worksCouncilContent">
+              <!-- Dynamic content will be loaded here -->
+            </div>
+          </div>
+
+          <!-- Works Committee Section -->
+          <div>
+            <h3 style="margin-bottom: 16px; color: var(--secondary)">
+              Works Committee
+            </h3>
+            <div id="worksCommitteeContent">
+              <!-- Dynamic content will be loaded here -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Update Profile Tab -->
+      <div id="updateProfile" class="tab-content">
+        <div class="card">
+          <h2 style="margin-bottom: 20px; color: var(--primary)">
+            Update Profile
+          </h2>
+
+          <form id="updateProfileForm">
+            <div
+              style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px"
+            >
+              <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-input" id="updateFullName" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">National ID</label>
+                <input type="text" class="form-input" id="updateNationalId" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Date of Birth</label>
+                <input type="date" class="form-input" id="updateDob" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Gender</label>
+                <select class="form-select" id="updateGender">
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Job Title</label>
+                <input type="text" class="form-input" id="updateJobTitle" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Date Joined</label>
+                <input type="date" class="form-input" id="updateDateJoined" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Grade</label>
+                <input type="text" class="form-input" id="updateGrade" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Contact Number</label>
+                <input type="tel" class="form-input" id="updateContact" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Position in Union</label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="updatePosition"
+                  readonly
+                  style="background: #f5f5f5"
+                />
+                <small
+                  style="color: var(--error); display: block; margin-top: 4px"
+                >
+                  You are not allowed to change this position. Contact the
+                  system administrator.
+                </small>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Branch</label>
+                <select class="form-select" id="updateBranch">
+                  <option value="">Select Branch</option>
+                  <option value="Matabeleland North">Matabeleland North</option>
+                  <option value="Matabeleland South">Matabeleland South</option>
+                  <option value="Bulawayo">Bulawayo</option>
+                </select>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              class="btn btn-primary"
+              style="margin-top: 20px"
+            >
+              Update Profile
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Union Tools Tab -->
+      <div id="unionTools" class="tab-content">
+        <div class="card">
+          <h2 style="margin-bottom: 20px; color: var(--primary)">
+            Union Tools
+          </h2>
+
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+              gap: 20px;
+            "
+          >
+            <!-- Tool Card 1 -->
+            <div class="info-card">
+              <h3 style="margin-bottom: 12px">Dues Calculator</h3>
+              <p style="margin-bottom: 16px; color: var(--secondary)">
+                Calculate your monthly union dues based on your grade and salary
+                scale.
+              </p>
+              <button
+                class="btn btn-primary"
+                onclick="visitTool('dues-calculator')"
+              >
+                Visit Tool
+              </button>
+            </div>
+
+            <!-- Tool Card 2 -->
+            <div class="info-card">
+              <h3 style="margin-bottom: 12px">Grievance Reporting</h3>
+              <p style="margin-bottom: 16px; color: var(--secondary)">
+                Submit and track workplace grievances through our secure portal.
+              </p>
+              <button
+                class="btn btn-primary"
+                onclick="visitTool('grievance-reporting')"
+              >
+                Visit Tool
+              </button>
+            </div>
+
+            <!-- Tool Card 3 -->
+            <div class="info-card">
+              <h3 style="margin-bottom: 12px">Training Portal</h3>
+              <p style="margin-bottom: 16px; color: var(--secondary)">
+                Access union training materials and register for upcoming
+                workshops.
+              </p>
+              <button
+                class="btn btn-primary"
+                onclick="visitTool('training-portal')"
+              >
+                Visit Tool
+              </button>
+            </div>
+
+            <!-- Tool Card 4 -->
+            <div class="info-card">
+              <h3 style="margin-bottom: 12px">Meeting Scheduler</h3>
+              <p style="margin-bottom: 16px; color: var(--secondary)">
+                Schedule and manage union meetings with your institution
+                representatives.
+              </p>
+              <button
+                class="btn btn-primary"
+                onclick="visitTool('meeting-scheduler')"
+              >
+                Visit Tool
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Support Button -->
+    <div class="support-btn" onclick="contactSupport()">
+      <span>Contact Support</span>
+      <img
+        src="assets/images/whatsapp-icon.svg"
+        alt="WhatsApp"
+        width="20"
+        height="20"
+        onerror="this.style.display='none'"
+      />
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/member.js"></script>
+    <script>
+      // Initialize Supabase
+      const supabaseUrl = "https://wugbnnyyovblandiqqqp.supabase.co";
+      const supabaseKey =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1Z2Jubnl5b3ZibGFuZGlxcXFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NTA1NzQsImV4cCI6MjA3NTMyNjU3NH0.qSBW1y8vxKTKIKvFsk9O2mNCBaPyPJj6dSLzYmSJ_wE";
+      const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+      // Initialize member dashboard when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        initializeMemberDashboard();
+      });
+    </script>
+  </body>
+</html>

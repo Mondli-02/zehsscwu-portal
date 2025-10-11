@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Portal - ZEHSSCWU</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png" />
+    <link rel="manifest" href="assets/images/site.webmanifest" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header style="background: var(--primary); color: white; padding: 16px 0">
+      <div class="container">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <h1>ZEHSSCWU Admin Portal</h1>
+          <div style="display: flex; align-items: center; gap: 16px">
+            <span class="welcome-board" id="adminWelcome">Welcome, Admin</span>
+            <button
+              class="btn btn-primary"
+              onclick="logout()"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container" style="margin-top: 24px">
+      <!-- Tabs Navigation -->
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('dashboard')">DASHBOARD</div>
+        <div class="tab" onclick="switchTab('institutionProfiles')">
+          INSTITUTION PROFILES
+        </div>
+        <div class="tab" onclick="switchTab('memberProfiles')">
+          MEMBER PROFILES
+        </div>
+        <div class="tab" onclick="switchTab('updateProfiles')">
+          UPDATE PROFILES
+        </div>
+        <div class="tab" onclick="switchTab('addInstitution')">
+          ADD INSTITUTION
+        </div>
+        <div class="tab" onclick="switchTab('memberRequests')">
+          MEMBER REQUESTS
+        </div>
+      </div>
+
+      <!-- Dashboard Tab -->
+      <div id="dashboard" class="tab-content active">
+        <div class="card">
+          <h2 style="margin-bottom: 20px; color: var(--primary)">
+            System Dashboard
+          </h2>
+
+          <!-- Stats Cards -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-number" id="totalInstitutions">0</span>
+              <span class="stat-label">Total Institutions</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number" id="totalMembers">0</span>
+              <span class="stat-label">Total Members</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number" id="totalWorksCouncils">0</span>
+              <span class="stat-label">Works Councils</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number" id="totalWorksCommittees">0</span>
+              <span class="stat-label">Works Committees</span>
+            </div>
+          </div>
+
+          <!-- Advanced Search -->
+          <div class="info-card" style="margin-top: 24px">
+            <h3 style="margin-bottom: 16px; color: var(--secondary)">
+              Advanced Search
+            </h3>
+            <form id="adminSearchForm">
+              <div
+                style="
+                  display: grid;
+                  grid-template-columns: 1fr 1fr 1fr;
+                  gap: 16px;
+                "
+              >
+                <div class="form-group">
+                  <label class="form-label">Search Type</label>
+                  <select class="form-select" id="searchType">
+                    <option value="institution">Institution</option>
+                    <option value="member">Member</option>
+                    <option value="memberByJob">Members by Job Title</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Search Term</label>
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="searchTerm"
+                    placeholder="Enter search term"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Branch Filter</label>
+                  <select class="form-select" id="searchBranch">
+                    <option value="">All Branches</option>
+                    <option value="Matabeleland North">
+                      Matabeleland North
+                    </option>
+                    <option value="Matabeleland South">
+                      Matabeleland South
+                    </option>
+                    <option value="Bulawayo">Bulawayo</option>
+                  </select>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                class="btn btn-primary"
+                style="margin-top: 16px"
+              >
+                Search
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="clearAdminSearch()"
+                style="margin-top: 16px; margin-left: 8px"
+              >
+                Clear Search
+              </button>
+            </form>
+          </div>
+
+          <!-- Search Results -->
+          <div id="adminSearchResults" style="margin-top: 24px">
+            <h3 style="margin-bottom: 16px; color: var(--secondary)">
+              Search Results
+            </h3>
+            <div style="overflow-x: auto">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Details</th>
+                    <th>Branch</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="adminSearchResultsBody">
+                  <!-- Dynamic content -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Institution Profiles Tab -->
+      <div id="institutionProfiles" class="tab-content">
+        <div class="card">
+          <h2 style="margin-bottom: 20px; color: var(--primary)">
+            Institution Profiles
+          </h2>
+
+          <!-- Search Filter -->
+          <div class="info-card" style="margin-bottom: 24px">
+            <h3 style="margin-bottom: 16px; color: var(--secondary)">
+              Search Institutions
+            </h3>
+            <div style="display: flex; gap: 16px; align-items: end">
+              <div class="form-group" style="flex: 1">
+                <label class="form-label">Search by Name</label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="institutionSearch"
+                  placeholder="Enter institution name"
+                  oninput="searchInstitutions()"
+                />
+              </div>
+              <button
+                class="btn btn-secondary"
+                onclick="clearInstitutionSearch()"
+              >
+                Clear
+              </button>
+            </div>
+          </div>
+
+          <!-- Institutions Table -->
+          <div style="overflow-x: auto">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Institution Name</th>
+                  <th>Institution ID</th>
+                  <th>Members Count</th>
+                  <th>Email</th>
+                  <th>Branch</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="institutionsTableBody">
+                <!-- Dynamic content -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Member Profiles Tab -->
+      <div id="memberProfiles" class="tab-content">
+        <div class="card">
+          <h2 style="margin-bottom: 20px; color: var(--primary)">
+            Member Profiles
+          </h2>
+
+          <!-- Search Filters -->
+          <div class="info-card" style="margin-bottom: 24px">
+            <h3 style="margin-bottom: 16px; color: var(--secondary)">
+              Search Members
+            </h3>
+            <form id="memberSearchAdminForm">
+              <div
+                style="
+                  display: grid;
+                  grid-template-columns: 1fr 1fr 1fr 1fr;
+                  gap: 16px;
+                "
+              >
+                <div class="form-group">
+                  <label class="form-label">Search by Name</label>
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="adminMemberSearchName"
+                    placeholder="Enter member name"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Search by Job Title</label>
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="adminMemberSearchJob"
+                    placeholder="Enter job title"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Search by Grade</label>
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="adminMemberSearchGrade"
+                    placeholder="Enter grade"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Search by Institution</label>
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="adminMemberSearchInstitution"
+                    placeholder="Enter institution"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                class="btn btn-primary"
+                style="margin-top: 16px"
+              >
+                Search Members
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="clearMemberAdminSearch()"
+                style="margin-top: 16px; margin-left: 8px"
+              >
+                Clear Search
+              </button>
+            </form>
+          </div>
+
+          <!-- Members Table -->
+          <div style="overflow-x: auto">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Member ID</th>
+                  <th>Full Name</th>
+                  <th>Institution</th>
+                  <th>Job Title</th>
+                  <th>Grade</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="membersAdminTableBody">
+                <!-- Dynamic content -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Update Profiles Tab -->
+      <div id="updateProfiles" class="tab-content">
+        <div class="card">
+          <h2 style="margin-bottom: 20px; color: var(--primary)">
+            Update Profiles
+          </h2>
+
+          <!-- Institution Update Section -->
+          <div class="info-card" style="margin-bottom: 32px">
+            <h3 style="margin-bottom: 16px; color: var(--secondary)">
+              Update Institution Profiles
+            </h3>
+            <div
+              style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px"
+            >
+              <div class="form-group">
+                <label class="form-label">Search Institution by Name</label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="updateInstitutionSearch"
+                  placeholder="Enter institution name"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Filter by Branch</label>
+                <select class="form-select" id="updateInstitutionBranch">
+                  <option value="">All Branches</option>
+                  <option value="Matabeleland North">Matabeleland North</option>
+                  <option value="Matabeleland South">Matabeleland South</option>
+                  <option value="Bulawayo">Bulawayo</option>
+                </select>
+              </div>
+            </div>
+
+            <button
+              class="btn btn-primary"
+              onclick="searchInstitutionsForUpdate()"
+              style="margin-top: 16px"
+            >
+              Search Institutions
+            </button>
+
+            <div id="institutionUpdateResults" style="margin-top: 20px">
+              <!-- Dynamic content -->
+            </div>
+          </div>
+
+          <!-- Works Council & Committee Management -->
+          <div class="info-card" style="margin-bottom: 32px">
+            <h3 style="margin-bottom: 16px; color: var(--secondary)">
+              Works Council & Committee Management
+            </h3>
+            <div
+              style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px"
+            >
+              <div class="form-group">
+                <label class="form-label">Select Institution</label>
+                <select class="form-select" id="worksInstitutionSelect">
+                  <option value="">Select Institution</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Management Type</label>
+                <select class="form-select" id="worksManagementType">
+                  <option value="council">Works Council</option>
+                  <option value="committee">Works Committee</option>
+                </select>
+              </div>
+            </div>
+
+            <button
+              class="btn btn-primary"
+              onclick="loadWorksManagement()"
+              style="margin-top: 16px"
+            >
+              Load Management Panel
+            </button>
+
+            <div id="worksManagementPanel" style="margin-top: 20px">
+              <!-- Dynamic content -->
+            </div>
+          </div>
+
+          <!-- Member Update Section -->
+          <div class="info-card">
+            <h3 style="margin-bottom: 16px; color: var(--secondary)">
+              Update Member Profiles
+            </h3>
+            <div
+              style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px"
+            >
+              <div class="form-group">
+                <label class="form-label">Search Member by Name</label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="updateMemberSearch"
+                  placeholder="Enter member name"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Filter by Branch</label>
+                <select class="form-select" id="updateMemberBranch">
+                  <option value="">All Branches</option>
+                  <option value="Matabeleland North">Matabeleland North</option>
+                  <option value="Matabeleland South">Matabeleland South</option>
+                  <option value="Bulawayo">Bulawayo</option>
+                </select>
+              </div>
+            </div>
+
+            <button
+              class="btn btn-primary"
+              onclick="searchMembersForUpdate()"
+              style="margin-top: 16px"
+            >
+              Search Members
+            </button>
+
+            <div id="memberUpdateResults" style="margin-top: 20px">
+              <!-- Dynamic content -->
+            </div>
+          </div>
+          <!-- Add to admin.html in UPDATE PROFILES tab -->
+          <div class="info-card" style="margin-top: 24px">
+            <h3 style="margin-bottom: 16px; color: var(--secondary)">
+              Add Members to Existing Institution
+            </h3>
+
+            <div
+              style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px"
+            >
+              <div class="form-group">
+                <label class="form-label">Select Institution</label>
+                <select class="form-select" id="adminAddMemberInstitution">
+                  <option value="">Select Institution</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Member ID</label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="adminNewMemberId"
+                  placeholder="e.g., ZEH-0006"
+                />
+              </div>
+            </div>
+
+            <button
+              class="btn btn-primary"
+              onclick="loadAdminAddMemberForm()"
+              style="margin-top: 16px"
+            >
+              Load Member Form
+            </button>
+
+            <div
+              id="adminAddMemberFormContainer"
+              style="margin-top: 20px; display: none"
+            >
+              <!-- Dynamic form will be loaded here -->
+            </div>
+          </div>
+
+          
+        </div>
+      </div>
+
+      <!-- Add Institution Tab -->
+      <div id="addInstitution" class="tab-content">
+        <div class="card">
+          <h2 style="margin-bottom: 20px; color: var(--primary)">
+            Add New Institution
+          </h2>
+
+          <form id="addInstitutionForm">
+            <div
+              style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px"
+            >
+              <div class="form-group">
+                <label class="form-label">Institution ID *</label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="newInstitutionId"
+                  placeholder="e.g., INST-Z0001"
+                  required
+                />
+                <small style="color: var(--secondary)"
+                  >Format: INST-Z0000</small
+                >
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Institution Name *</label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="newInstitutionName"
+                  placeholder="Enter institution name"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Email Address *</label>
+                <input
+                  type="email"
+                  class="form-input"
+                  id="newInstitutionEmail"
+                  placeholder="Enter email address"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Landline</label>
+                <input
+                  type="tel"
+                  class="form-input"
+                  id="newInstitutionLandline"
+                  placeholder="Enter landline number"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Head Contact *</label>
+                <input
+                  type="tel"
+                  class="form-input"
+                  id="newInstitutionHead"
+                  placeholder="Enter head contact number"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Bursar Contact</label>
+                <input
+                  type="tel"
+                  class="form-input"
+                  id="newInstitutionBursar"
+                  placeholder="Enter bursar contact number"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Branch *</label>
+                <select class="form-select" id="newInstitutionBranch" required>
+                  <option value="">Select Branch</option>
+                  <option value="Matabeleland North">Matabeleland North</option>
+                  <option value="Matabeleland South">Matabeleland South</option>
+                  <option value="Bulawayo">Bulawayo</option>
+                </select>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              class="btn btn-primary"
+              style="margin-top: 20px"
+            >
+              Create Institution
+            </button>
+          </form>
+
+          <!-- Add Members Section -->
+          <div id="addMembersSection" style="margin-top: 32px; display: none">
+            <h3 style="margin-bottom: 16px; color: var(--secondary)">
+              Add Members to Institution
+            </h3>
+            <form id="addMemberForm">
+              <div
+                style="
+                  display: grid;
+                  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                  gap: 16px;
+                "
+              >
+                <div class="form-group">
+                  <label class="form-label">Member ID *</label>
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="newMemberId"
+                    placeholder="e.g., ZEH-0001"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Full Name *</label>
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="newMemberName"
+                    placeholder="Enter full name"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">National ID</label>
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="newMemberNationalId"
+                    placeholder="Enter national ID"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Date of Birth</label>
+                  <input type="date" class="form-input" id="newMemberDob" />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Gender</label>
+                  <select class="form-select" id="newMemberGender">
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Job Title</label>
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="newMemberJobTitle"
+                    placeholder="Enter job title"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Date Joined</label>
+                  <input
+                    type="date"
+                    class="form-input"
+                    id="newMemberDateJoined"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Grade</label>
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="newMemberGrade"
+                    placeholder="Enter grade"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Contact Number</label>
+                  <input
+                    type="tel"
+                    class="form-input"
+                    id="newMemberContact"
+                    placeholder="Enter contact number"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Position in Union</label>
+                  <select class="form-select" id="newMemberPosition">
+                    <option value="Member">Member</option>
+                    <option value="Chairperson">Chairperson</option>
+                    <option value="Secretary">Secretary</option>
+                    <option value="Treasurer">Treasurer</option>
+                    <option value="Board member">Board member</option>
+                    <option value="Executive member">Executive member</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Branch</label>
+                  <select class="form-select" id="newMemberBranch">
+                    <option value="Matabeleland North">
+                      Matabeleland North
+                    </option>
+                    <option value="Matabeleland South">
+                      Matabeleland South
+                    </option>
+                    <option value="Bulawayo">Bulawayo</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 12px; margin-top: 20px">
+                <button type="submit" class="btn btn-primary">
+                  Add Member
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  onclick="finishAddingMembers()"
+                >
+                  Finish
+                </button>
+              </div>
+            </form>
+
+            <div id="addedMembersList" style="margin-top: 20px">
+              <h4>Added Members</h4>
+              <div id="addedMembersContainer">
+                <!-- Dynamic content -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Member Requests Tab -->
+            <div id="memberRequests" class="tab-content">
+                <div class="card">
+                    <h2 style="margin-bottom: 20px; color: var(--primary)">Member Requests Management</h2>
+
+                    <div class="info-card">
+            <h3 style="margin-bottom: 16px; color: var(--secondary)">
+                Pending Member Requests
+            </h3>
+
+            <div class="form-group" style="max-width: 300px; margin-bottom: 16px;">
+                <label class="form-label">Next Available Member ID</label>
+                <input
+                    type="text"
+                    class="form-input"
+                    id="nextMemberId"
+                    value="ZEH-0001"
+                    placeholder="e.g., ZEH-0001"
+                    readonly
+                    style="background: #f5f5f5;"
+                />
+                <small style="color: var(--secondary)">Automatically determined next available ID</small>
+            </div>
+
+            <button class="btn btn-primary" onclick="loadMemberRequests()">
+                Refresh Requests
+            </button>
+
+            <div id="memberRequestsContainer" style="margin-top: 20px">
+                <!-- Dynamic content will appear here -->
+            </div>
+        </div>
+    </div>
+</div>
+      </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="institutionModal" class="modal">
+      <div class="modal-content">
+        <span class="modal-close" onclick="closeInstitutionModal()"
+          >&times;</span
+        >
+        <h2 style="margin-bottom: 20px; color: var(--primary)">
+          Institution Profile
+        </h2>
+        <div id="institutionModalContent">
+          <!-- Dynamic content -->
+        </div>
+      </div>
+    </div>
+
+    <div id="memberModalAdmin" class="modal">
+      <div class="modal-content">
+        <span class="modal-close" onclick="closeMemberModalAdmin()"
+          >&times;</span
+        >
+        <h2 style="margin-bottom: 20px; color: var(--primary)">
+          Member Profile
+        </h2>
+        <div id="memberModalAdminContent">
+          <!-- Dynamic content -->
+        </div>
+        <div style="margin-top: 20px; display: flex; gap: 12px">
+          <button class="btn btn-primary" onclick="saveMemberChangesAdmin()">
+            Save Changes
+          </button>
+          <button class="btn btn-secondary" onclick="closeMemberModalAdmin()">
+            Cancel
+          </button>
+          <button
+            class="btn"
+            style="background: var(--error); color: white"
+            onclick="deleteMemberAdmin()"
+          >
+            Delete Member
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Support Button -->
+    <div class="support-btn" onclick="contactAdminSupport()">
+      <span>Contact Support</span>
+      <img
+        src="assets/images/whatsapp-icon.svg"
+        alt="WhatsApp"
+        width="20"
+        height="20"
+        onerror="this.style.display='none'"
+      />
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+    <script>
+      // Initialize Supabase
+      const supabaseUrl = "https://wugbnnyyovblandiqqqp.supabase.co";
+      const supabaseKey =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1Z2Jubnl5b3ZibGFuZGlxcXFwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1OTc1MDU3NCwiZXhwIjoyMDc1MzI2NTc0fQ.yT7QgVyPkHZxyBBEnNUU8Mf4Q8tXbihhXc-sS7cQ3Fc";
+      const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+      // Initialize admin dashboard when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        initializeAdminDashboard();
+      });
+    </script>
+  </body>
+</html>

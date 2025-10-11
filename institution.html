@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Institution Portal - ZEHSSCWU</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png" />
+    <link rel="manifest" href="assets/images/site.webmanifest" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header style="background: var(--primary); color: white; padding: 16px 0">
+      <div class="container">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <h1>ZEHSSCWU Institution Portal</h1>
+          <div style="display: flex; align-items: center; gap: 16px">
+            <span class="welcome-board" id="institutionWelcome"
+              >Welcome, Institution</span
+            >
+            <button class="btn btn-primary" onclick="logout()">Logout</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container" style="margin-top: 24px">
+      <!-- Tabs Navigation -->
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('profile')">Profile</div>
+        <div class="tab" onclick="switchTab('worksCouncil')">
+          Works Council & Committee
+        </div>
+        <div class="tab" onclick="switchTab('logPayment')">Log Payment</div>
+        <div class="tab" onclick="switchTab('updateProfile')">
+          Update Profile
+        </div>
+        <div class="tab" onclick="switchTab('memberSearch')">Member Search</div>
+        <div class="tab" onclick="switchTab('unionTools')">Union Tools</div>
+        <div class="tab" onclick="switchTab('addMember')">Add Member</div>
+        <div class="tab" onclick="switchTab('manageWorks')">
+          Manage Works Council
+        </div>
+      </div>
+
+      <!-- Profile Tab -->
+      <div id="profile" class="tab-content active">
+        <div class="card">
+          <h2 style="margin-bottom: 20px; color: var(--primary)">
+            Institution Profile
+          </h2>
+
+          <!-- Stats Card -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-number" id="totalMembers">0</span>
+              <span class="stat-label">Total Members</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number" id="totalWorksCouncil">0</span>
+              <span class="stat-label">Works Council Members</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number" id="totalWorksCommittee">0</span>
+              <span class="stat-label">Works Committee Members</span>
+            </div>
+          </div>
+
+          <!-- Institution Details -->
+          <div class="info-card" style="margin-bottom: 24px">
+            <h3 style="margin-bottom: 16px; color: var(--secondary)">
+              Institution Details
+            </h3>
+            <div class="info-row">
+              <span class="info-label">Institution ID</span>
+              <span class="info-value" id="institutionId">-</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Institution Name</span>
+              <span class="info-value" id="institutionName">-</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Email Address</span>
+              <span class="info-value" id="institutionEmail">-</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Landline</span>
+              <span class="info-value" id="institutionLandline">-</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Head Contact</span>
+              <span class="info-value" id="institutionHead">-</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Bursar Contact</span>
+              <span class="info-value" id="institutionBursar">-</span>
+            </div>
+          </div>
+
+          <!-- Members Info -->
+          <div class="info-card">
+            <h3 style="margin-bottom: 16px; color: var(--secondary)">
+              Members Information
+            </h3>
+            <div style="overflow-x: auto">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Member ID</th>
+                    <th>Member Name</th>
+                    <th>Job Title</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="membersTableBody">
+                  <!-- Dynamic content -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <button
+            class="btn btn-primary"
+            onclick="switchTab('updateProfile')"
+            style="margin-top: 20px"
+          >
+            Update Profile
+          </button>
+        </div>
+      </div>
+
+      <!-- Works Council & Committee Tab -->
+      <div id="worksCouncil" class="tab-content">
+        <div class="card">
+          <h2 style="margin-bottom: 20px; color: var(--primary)">
+            Works Council & Committee
+          </h2>
+
+          <!-- Works Council Section -->
+          <div style="margin-bottom: 32px">
+            <h3 style="margin-bottom: 16px; color: var(--secondary)">
+              Works Council
+            </h3>
+            <div id="institutionWorksCouncilContent">
+              <!-- Dynamic content -->
+            </div>
+          </div>
+
+          <!-- Works Committee Section -->
+          <div>
+            <h3 style="margin-bottom: 16px; color: var(--secondary)">
+              Works Committee
+            </h3>
+            <div id="institutionWorksCommitteeContent">
+              <!-- Dynamic content -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Log Payment Tab -->
+      <div id="logPayment" class="tab-content">
+        <div class="card">
+          <h2 style="margin-bottom: 20px; color: var(--primary)">
+            Log Payment
+          </h2>
+          <div class="info-card">
+            <p
+              style="text-align: center; margin-bottom: 20px; font-size: 1.1rem"
+            >
+              You can log a new payment by pressing the button below.
+            </p>
+            <button
+              class="btn btn-primary"
+              onclick="logPayment()"
+              style="display: block; margin: 0 auto; padding: 12px 32px"
+            >
+              LOG PAYMENT
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Update Profile Tab -->
+      <div id="updateProfile" class="tab-content">
+        <div class="card">
+          <h2 style="margin-bottom: 20px; color: var(--primary)">
+            Update Institution Profile
+          </h2>
+
+          <form id="updateInstitutionForm">
+            <div
+              style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px"
+            >
+              <div class="form-group">
+                <label class="form-label">Institution Name</label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="updateInstitutionName"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input
+                  type="email"
+                  class="form-input"
+                  id="updateInstitutionEmail"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Landline</label>
+                <input
+                  type="tel"
+                  class="form-input"
+                  id="updateInstitutionLandline"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Head Contact</label>
+                <input
+                  type="tel"
+                  class="form-input"
+                  id="updateInstitutionHead"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Bursar Contact</label>
+                <input
+                  type="tel"
+                  class="form-input"
+                  id="updateInstitutionBursar"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              class="btn btn-primary"
+              style="margin-top: 20px"
+            >
+              Update Institution Profile
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Member Search Tab -->
+      <div id="memberSearch" class="tab-content">
+        <div class="card">
+          <h2 style="margin-bottom: 20px; color: var(--primary)">
+            Member Search
+          </h2>
+
+          <!-- Search Form -->
+          <div class="info-card" style="margin-bottom: 24px">
+            <h3 style="margin-bottom: 16px; color: var(--secondary)">
+              Search Members
+            </h3>
+            <form id="memberSearchForm">
+              <div
+                style="
+                  display: grid;
+                  grid-template-columns: 1fr 1fr 1fr;
+                  gap: 16px;
+                "
+              >
+                <div class="form-group">
+                  <label class="form-label">Search by Name</label>
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="searchName"
+                    placeholder="Enter member name"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Search by Grade</label>
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="searchGrade"
+                    placeholder="Enter grade"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Search by Job Title</label>
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="searchJobTitle"
+                    placeholder="Enter job title"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                class="btn btn-primary"
+                style="margin-top: 16px"
+              >
+                Search Members
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="clearSearch()"
+                style="margin-top: 16px; margin-left: 8px"
+              >
+                Clear Search
+              </button>
+            </form>
+          </div>
+
+          <!-- Search Results -->
+          <div id="searchResults">
+            <h3 style="margin-bottom: 16px; color: var(--secondary)">
+              Search Results
+            </h3>
+            <div style="overflow-x: auto">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Member ID</th>
+                    <th>Full Name</th>
+                    <th>Job Title</th>
+                    <th>Grade</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="searchResultsBody">
+                  <!-- Dynamic content -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Union Tools Tab -->
+      <div id="unionTools" class="tab-content">
+        <div class="card">
+          <h2 style="margin-bottom: 20px; color: var(--primary)">
+            Union Tools
+          </h2>
+
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+              gap: 20px;
+            "
+          >
+            <!-- Tool Card 1 -->
+            <div class="info-card">
+              <h3 style="margin-bottom: 12px">Bulk Dues Calculator</h3>
+              <p style="margin-bottom: 16px; color: var(--secondary)">
+                Calculate union dues for all members in your institution.
+              </p>
+              <button
+                class="btn btn-primary"
+                onclick="visitInstitutionTool('bulk-dues-calculator')"
+              >
+                Visit Tool
+              </button>
+            </div>
+
+            <!-- Tool Card 2 -->
+            <div class="info-card">
+              <h3 style="margin-bottom: 12px">Member Reports</h3>
+              <p style="margin-bottom: 16px; color: var(--secondary)">
+                Generate detailed reports on member status and dues payments.
+              </p>
+              <button
+                class="btn btn-primary"
+                onclick="visitInstitutionTool('member-reports')"
+              >
+                Visit Tool
+              </button>
+            </div>
+
+            <!-- Tool Card 3 -->
+            <div class="info-card">
+              <h3 style="margin-bottom: 12px">Meeting Management</h3>
+              <p style="margin-bottom: 16px; color: var(--secondary)">
+                Schedule and manage meetings with Works Council and Committee.
+              </p>
+              <button
+                class="btn btn-primary"
+                onclick="visitInstitutionTool('meeting-management')"
+              >
+                Visit Tool
+              </button>
+            </div>
+
+            <!-- Tool Card 4 -->
+            <div class="info-card">
+              <h3 style="margin-bottom: 12px">Payment Tracking</h3>
+              <p style="margin-bottom: 16px; color: var(--secondary)">
+                Track and monitor union dues payments from members.
+              </p>
+              <button
+                class="btn btn-primary"
+                onclick="visitInstitutionTool('payment-tracking')"
+              >
+                Visit Tool
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add NEW MEMBER TAB -->
+      <!-- Updated Add Member form in institution.html -->
+      <div id="addMember" class="tab-content">
+        <div class="card">
+          <h2 style="margin-bottom: 20px; color: var(--primary)">
+            Request New Member
+          </h2>
+          <p style="color: var(--secondary); margin-bottom: 20px">
+            Submit a request to add a new member. The admin will assign a Member
+            ID and create the account.
+          </p>
+
+          <form id="addNewMemberForm">
+            <div
+              style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px"
+            >
+              <div class="form-group">
+                <label class="form-label">Full Name *</label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="newMemberNameInst"
+                  placeholder="Enter full name"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">National ID</label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="newMemberNationalIdInst"
+                  placeholder="Enter national ID"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Date of Birth</label>
+                <input type="date" class="form-input" id="newMemberDobInst" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Gender</label>
+                <select class="form-select" id="newMemberGenderInst">
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Job Title *</label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="newMemberJobTitleInst"
+                  placeholder="Enter job title"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Date Joined *</label>
+                <input
+                  type="date"
+                  class="form-input"
+                  id="newMemberDateJoinedInst"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Grade</label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="newMemberGradeInst"
+                  placeholder="Enter grade"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Contact Number</label>
+                <input
+                  type="tel"
+                  class="form-input"
+                  id="newMemberContactInst"
+                  placeholder="Enter contact number"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Position in Union</label>
+                <select class="form-select" id="newMemberPositionInst">
+                  <option value="Member">Member</option>
+                  <option value="Chairperson">Chairperson</option>
+                  <option value="Secretary">Secretary</option>
+                  <option value="Treasurer">Treasurer</option>
+                  <option value="Board member">Board member</option>
+                  <option value="Executive member">Executive member</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Branch</label>
+                <select class="form-select" id="newMemberBranchInst">
+                  <option value="Matabeleland North">Matabeleland North</option>
+                  <option value="Matabeleland South">Matabeleland South</option>
+                  <option value="Bulawayo">Bulawayo</option>
+                </select>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              class="btn btn-primary"
+              style="margin-top: 20px"
+            >
+              Submit Member Request
+            </button>
+          </form>
+
+          <!-- Pending Requests Section -->
+          <div id="pendingRequests" style="margin-top: 32px; display: none">
+            <h3 style="margin-bottom: 16px; color: var(--secondary)">
+              Your Pending Requests
+            </h3>
+            <div id="pendingRequestsList">
+              <!-- Dynamic content -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MANAGE WORKS COUNCIL AND COMMITTEE -->
+      <div id="manageWorks" class="tab-content">
+        <div class="card">
+          <h2 style="margin-bottom: 20px; color: var(--primary)">
+            Manage Works Council & Committee
+          </h2>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px">
+            <!-- Works Council Section -->
+            <div>
+              <h3 style="margin-bottom: 16px; color: var(--secondary)">
+                Works Council
+              </h3>
+              <div id="worksCouncilManagement">
+                <div class="form-group">
+                  <label class="form-label">Select Member</label>
+                  <select class="form-select" id="worksCouncilMember">
+                    <option value="">Select Member</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Rank/Position</label>
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="worksCouncilRank"
+                    placeholder="e.g., Chairperson, Secretary"
+                  />
+                </div>
+
+                <button class="btn btn-primary" onclick="addToWorksCouncil()">
+                  Add to Works Council
+                </button>
+
+                <div id="currentWorksCouncil" style="margin-top: 20px">
+                  <h4>Current Works Council Members</h4>
+                  <!-- Dynamic content -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Works Committee Section -->
+            <div>
+              <h3 style="margin-bottom: 16px; color: var(--secondary)">
+                Works Committee
+              </h3>
+              <div id="worksCommitteeManagement">
+                <div class="form-group">
+                  <label class="form-label">Select Member</label>
+                  <select class="form-select" id="worksCommitteeMember">
+                    <option value="">Select Member</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Rank/Position</label>
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="worksCommitteeRank"
+                    placeholder="e.g., Chairperson, Secretary"
+                  />
+                </div>
+
+                <button class="btn btn-primary" onclick="addToWorksCommittee()">
+                  Add to Works Committee
+                </button>
+
+                <div id="currentWorksCommittee" style="margin-top: 20px">
+                  <h4>Current Works Committee Members</h4>
+                  <!-- Dynamic content -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Member Profile Modal -->
+    <div id="memberModal" class="modal">
+      <div class="modal-content">
+        <span class="modal-close" onclick="closeMemberModal()">&times;</span>
+        <h2 style="margin-bottom: 20px; color: var(--primary)">
+          Member Profile
+        </h2>
+        <div id="memberModalContent">
+          <!-- Dynamic content -->
+        </div>
+        <div style="margin-top: 20px; display: flex; gap: 12px">
+          <button class="btn btn-primary" onclick="saveMemberChanges()">
+            Save Changes
+          </button>
+          <button class="btn btn-secondary" onclick="closeMemberModal()">
+            Cancel
+          </button>
+          <button
+            class="btn"
+            style="background: var(--error); color: white"
+            onclick="requestMemberDelete()"
+          >
+            Request Profile Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Support Button -->
+    <div class="support-btn" onclick="contactInstitutionSupport()">
+      <span>Contact Support</span>
+      <img
+        src="assets/images/whatsapp-icon.svg"
+        alt="WhatsApp"
+        width="20"
+        height="20"
+        onerror="this.style.display='none'"
+      />
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/institution.js"></script>
+    <script>
+      // Initialize Supabase
+      const supabaseUrl = "https://wugbnnyyovblandiqqqp.supabase.co";
+      const supabaseKey =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1Z2Jubnl5b3ZibGFuZGlxcXFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NTA1NzQsImV4cCI6MjA3NTMyNjU3NH0.qSBW1y8vxKTKIKvFsk9O2mNCBaPyPJj6dSLzYmSJ_wE";
+      const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+      // Initialize institution dashboard when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        initializeInstitutionDashboard();
+      });
+    </script>
+  </body>
+</html>

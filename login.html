@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ZEHSSCWU Access</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png" />
+    <link rel="manifest" href="assets/images/site.webmanifest" />
+  </head>
+  <body>
+    <div class="container" style="max-width: 400px; margin-top: 100px">
+      <div class="card">
+        <h1
+          style="text-align: center; margin-bottom: 24px; color: var(--primary)"
+        >
+          ZEHSSCWU Access
+        </h1>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label class="form-label">Select User Type</label>
+            <select class="form-select" id="userType" required>
+              <option value="">Choose user type...</option>
+              <option value="member">Member</option>
+              <option value="institution">Institution</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Username</label>
+            <input
+              type="text"
+              class="form-input"
+              id="username"
+              required
+              placeholder="Enter your username"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input
+              type="password"
+              class="form-input"
+              id="password"
+              required
+              placeholder="Enter your password"
+            />
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%">
+            Login
+          </button>
+        </form>
+
+        <div
+          style="
+            margin-top: 20px;
+            text-align: center;
+            color: var(--secondary);
+            font-size: 0.9rem;
+          "
+        >
+          <p>Tap on the WhatsApp icon if you are having trouble logging in.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Support Button -->
+    <div class="support-btn" onclick="contactSupport()">
+      <span>Contact Support</span>
+      <img
+        src="assets/images/whatsapp-icon.svg"
+        alt="WhatsApp"
+        width="20"
+        height="20"
+        onerror="this.style.display='none'"
+      />
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+      // Initialize Supabase
+      const supabaseUrl = "https://wugbnnyyovblandiqqqp.supabase.co";
+      const supabaseKey =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1Z2Jubnl5b3ZibGFuZGlxcXFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NTA1NzQsImV4cCI6MjA3NTMyNjU3NH0.qSBW1y8vxKTKIKvFsk9O2mNCBaPyPJj6dSLzYmSJ_wE";
+      const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+      // Contact support function
+      function contactSupport() {
+        const message =
+          "Hi, ZEHSSCWU. I'm having trouble logging in. I would like assistance with ---";
+        const whatsappUrl = `https://wa.me/263777217619?text=${encodeURIComponent(
+          message
+        )}`;
+        window.open(whatsappUrl, "_blank");
+      }
+
+      // Form submission
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const userType = document.getElementById("userType").value;
+          const username = document.getElementById("username").value;
+          const password = document.getElementById("password").value;
+
+          await handleLogin(userType, username, password);
+        });
+    </script>
+  </body>
+</html>
