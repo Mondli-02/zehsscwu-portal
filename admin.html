@@ -13,28 +13,13 @@
   </head>
   <body>
     <!-- Header -->
-    <header style="background: var(--primary); color: white; padding: 16px 0">
-      <div class="container">
-        <div
-          style="
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-          "
-        >
-          <h1>ZEHSSCWU Admin Portal</h1>
-          <div style="display: flex; align-items: center; gap: 16px">
-            <span class="welcome-board" id="adminWelcome">Welcome, Admin</span>
-            <button
-              class="btn btn-primary"
-              onclick="logout()"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </div>
-    </header>
+   <div class="header-container">
+  <h1>ZEHSSCWU Admin Portal</h1>
+  <div class="header-actions">
+    <span class="welcome-board" id="adminWelcome">Welcome, Admin</span>
+    <button class="btn btn-primary" onclick="logout()">Logout</button>
+  </div>
+  </div>
 
     <!-- Main Content -->
     <div class="container" style="margin-top: 24px">
@@ -86,18 +71,12 @@
           </div>
 
           <!-- Advanced Search -->
-          <div class="info-card" style="margin-top: 24px">
+          <div class="info-card">
             <h3 style="margin-bottom: 16px; color: var(--secondary)">
               Advanced Search
             </h3>
             <form id="adminSearchForm">
-              <div
-                style="
-                  display: grid;
-                  grid-template-columns: 1fr 1fr 1fr;
-                  gap: 16px;
-                "
-              >
+              <div class="form-grid">
                 <div class="form-group">
                   <label class="form-label">Search Type</label>
                   <select class="form-select" id="searchType">
@@ -132,21 +111,10 @@
                 </div>
               </div>
 
-              <button
-                type="submit"
-                class="btn btn-primary"
-                style="margin-top: 16px"
-              >
-                Search
-              </button>
-              <button
-                type="button"
-                class="btn btn-secondary"
-                onclick="clearAdminSearch()"
-                style="margin-top: 16px; margin-left: 8px"
-              >
-                Clear Search
-              </button>
+              <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Search</button>
+              <button type="button" class="btn btn-secondary" onclick="clearAdminSearch()">Clear Search</button>
+              </div>
             </form>
           </div>
 
@@ -155,8 +123,8 @@
             <h3 style="margin-bottom: 16px; color: var(--secondary)">
               Search Results
             </h3>
-            <div style="overflow-x: auto">
-              <table class="data-table">
+            <div class="table-wrapper" style="overflow-x: auto">
+                <table class="data-table">
                 <thead>
                   <tr>
                     <th>Type</th>
@@ -184,11 +152,11 @@
           </h2>
 
           <!-- Search Filter -->
-          <div class="info-card" style="margin-bottom: 24px">
+          <div class="info-card">
             <h3 style="margin-bottom: 16px; color: var(--secondary)">
               Search Institutions
             </h3>
-            <div style="display: flex; gap: 16px; align-items: end">
+            <div class="form-grid">
               <div class="form-group" style="flex: 1">
                 <label class="form-label">Search by Name</label>
                 <input
@@ -209,8 +177,8 @@
           </div>
 
           <!-- Institutions Table -->
-          <div style="overflow-x: auto">
-            <table class="data-table">
+          <div class="table-wrapper" style="overflow-x: auto">
+              <table class="data-table">
               <thead>
                 <tr>
                   <th>Institution Name</th>
@@ -237,18 +205,12 @@
           </h2>
 
           <!-- Search Filters -->
-          <div class="info-card" style="margin-bottom: 24px">
+          <div class="info-card">
             <h3 style="margin-bottom: 16px; color: var(--secondary)">
               Search Members
             </h3>
             <form id="memberSearchAdminForm">
-              <div
-                style="
-                  display: grid;
-                  grid-template-columns: 1fr 1fr 1fr 1fr;
-                  gap: 16px;
-                "
-              >
+              <div class="form-grid">
                 <div class="form-group">
                   <label class="form-label">Search by Name</label>
                   <input
@@ -289,27 +251,15 @@
                   />
                 </div>
               </div>
-
-              <button
-                type="submit"
-                class="btn btn-primary"
-                style="margin-top: 16px"
-              >
-                Search Members
-              </button>
-              <button
-                type="button"
-                class="btn btn-secondary"
-                onclick="clearMemberAdminSearch()"
-                style="margin-top: 16px; margin-left: 8px"
-              >
-                Clear Search
-              </button>
+              <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Search Members</button>
+              <button type="button" class="btn btn-secondary" onclick="clearMemberAdminSearch()">Clear Search</button>
+              </div>
             </form>
           </div>
 
           <!-- Members Table -->
-          <div style="overflow-x: auto">
+          <div class="table-wrapper" style="overflow-x: auto">
             <table class="data-table">
               <thead>
                 <tr>
@@ -338,13 +288,11 @@
           </h2>
 
           <!-- Institution Update Section -->
-          <div class="info-card" style="margin-bottom: 32px">
+          <div class="info-card">
             <h3 style="margin-bottom: 16px; color: var(--secondary)">
               Update Institution Profiles
             </h3>
-            <div
-              style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px"
-            >
+            <div class="form-grid">
               <div class="form-group">
                 <label class="form-label">Search Institution by Name</label>
                 <input
@@ -380,13 +328,11 @@
           </div>
 
           <!-- Works Council & Committee Management -->
-          <div class="info-card" style="margin-bottom: 32px">
+          <div class="info-card">
             <h3 style="margin-bottom: 16px; color: var(--secondary)">
               Works Council & Committee Management
             </h3>
-            <div
-              style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px"
-            >
+            <div class="form-grid">
               <div class="form-group">
                 <label class="form-label">Select Institution</label>
                 <select class="form-select" id="worksInstitutionSelect">
@@ -421,9 +367,7 @@
             <h3 style="margin-bottom: 16px; color: var(--secondary)">
               Update Member Profiles
             </h3>
-            <div
-              style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px"
-            >
+            <div class="form-grid">
               <div class="form-group">
                 <label class="form-label">Search Member by Name</label>
                 <input
@@ -458,14 +402,12 @@
             </div>
           </div>
           <!-- Add to admin.html in UPDATE PROFILES tab -->
-          <div class="info-card" style="margin-top: 24px">
+          <div class="info-card">
             <h3 style="margin-bottom: 16px; color: var(--secondary)">
               Add Members to Existing Institution
             </h3>
 
-            <div
-              style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px"
-            >
+            <div class="form-grid">
               <div class="form-group">
                 <label class="form-label">Select Institution</label>
                 <select class="form-select" id="adminAddMemberInstitution">
@@ -512,9 +454,7 @@
           </h2>
 
           <form id="addInstitutionForm">
-            <div
-              style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px"
-            >
+            <div class="form-grid">
               <div class="form-group">
                 <label class="form-label">Institution ID *</label>
                 <input
@@ -608,13 +548,7 @@
               Add Members to Institution
             </h3>
             <form id="addMemberForm">
-              <div
-                style="
-                  display: grid;
-                  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                  gap: 16px;
-                "
-              >
+              <div class="form-grid">
                 <div class="form-group">
                   <label class="form-label">Member ID *</label>
                   <input
@@ -727,7 +661,7 @@
                 </div>
               </div>
 
-              <div style="display: flex; gap: 12px; margin-top: 20px">
+              <div class="form-grid">
                 <button type="submit" class="btn btn-primary">
                   Add Member
                 </button>
@@ -814,7 +748,7 @@
         <div id="memberModalAdminContent">
           <!-- Dynamic content -->
         </div>
-        <div style="margin-top: 20px; display: flex; gap: 12px">
+        <div class="modal-actions">
           <button class="btn btn-primary" onclick="saveMemberChangesAdmin()">
             Save Changes
           </button>

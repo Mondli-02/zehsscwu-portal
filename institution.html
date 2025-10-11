@@ -6,32 +6,36 @@
     <title>Institution Portal - ZEHSSCWU</title>
     <link rel="stylesheet" href="css/styles.css" />
     <link rel="stylesheet" href="css/components.css" />
-    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="assets/images/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="assets/images/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="assets/images/favicon-16x16.png"
+    />
     <link rel="manifest" href="assets/images/site.webmanifest" />
   </head>
   <body>
     <!-- Header -->
-    <header style="background: var(--primary); color: white; padding: 16px 0">
-      <div class="container">
-        <div
-          style="
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-          "
+    <div class="header-container">
+      <h1>ZEHSSCWU Institution Portal</h1>
+      <div class="header-actions">
+        <span class="welcome-board" id="institutionWelcome"
+          >Welcome, Institution</span
         >
-          <h1>ZEHSSCWU Institution Portal</h1>
-          <div style="display: flex; align-items: center; gap: 16px">
-            <span class="welcome-board" id="institutionWelcome"
-              >Welcome, Institution</span
-            >
-            <button class="btn btn-primary" onclick="logout()">Logout</button>
-          </div>
-        </div>
+        <button class="btn btn-primary" onclick="logout()">Logout</button>
       </div>
-    </header>
+    </div>
 
     <!-- Main Content -->
     <div class="container" style="margin-top: 24px">
@@ -77,7 +81,7 @@
           </div>
 
           <!-- Institution Details -->
-          <div class="info-card" style="margin-bottom: 24px">
+          <div class="info-card">
             <h3 style="margin-bottom: 16px; color: var(--secondary)">
               Institution Details
             </h3>
@@ -112,7 +116,7 @@
             <h3 style="margin-bottom: 16px; color: var(--secondary)">
               Members Information
             </h3>
-            <div style="overflow-x: auto">
+            <div class="table-wrapper" style="overflow-x: auto">
               <table class="data-table">
                 <thead>
                   <tr>
@@ -176,18 +180,12 @@
             Log Payment
           </h2>
           <div class="info-card">
-            <p
-              style="text-align: center; margin-bottom: 20px; font-size: 1.1rem"
-            >
-              You can log a new payment by pressing the button below.
-            </p>
-            <button
-              class="btn btn-primary"
-              onclick="logPayment()"
-              style="display: block; margin: 0 auto; padding: 12px 32px"
-            >
-              LOG PAYMENT
-            </button>
+            <div class="centered-content">
+              <p>You can log a new payment by pressing the button below.</p>
+              <button class="btn btn-primary" onclick="logPayment()">
+                LOG PAYMENT
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -200,9 +198,7 @@
           </h2>
 
           <form id="updateInstitutionForm">
-            <div
-              style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px"
-            >
+            <div class="form-grid">
               <div class="form-group">
                 <label class="form-label">Institution Name</label>
                 <input
@@ -268,18 +264,12 @@
           </h2>
 
           <!-- Search Form -->
-          <div class="info-card" style="margin-bottom: 24px">
+          <div class="info-card">
             <h3 style="margin-bottom: 16px; color: var(--secondary)">
               Search Members
             </h3>
             <form id="memberSearchForm">
-              <div
-                style="
-                  display: grid;
-                  grid-template-columns: 1fr 1fr 1fr;
-                  gap: 16px;
-                "
-              >
+              <div class="form-grid">
                 <div class="form-group">
                   <label class="form-label">Search by Name</label>
                   <input
@@ -334,7 +324,7 @@
             <h3 style="margin-bottom: 16px; color: var(--secondary)">
               Search Results
             </h3>
-            <div style="overflow-x: auto">
+            <div class="table-wrapper" style="overflow-x: auto">
               <table class="data-table">
                 <thead>
                   <tr>
@@ -362,13 +352,7 @@
             Union Tools
           </h2>
 
-          <div
-            style="
-              display: grid;
-              grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-              gap: 20px;
-            "
-          >
+          <div class="form-grid">
             <!-- Tool Card 1 -->
             <div class="info-card">
               <h3 style="margin-bottom: 12px">Bulk Dues Calculator</h3>
@@ -441,9 +425,7 @@
           </p>
 
           <form id="addNewMemberForm">
-            <div
-              style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px"
-            >
+            <div class="form-grid">
               <div class="form-group">
                 <label class="form-label">Full Name *</label>
                 <input
@@ -571,7 +553,7 @@
             Manage Works Council & Committee
           </h2>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px">
+          <div class="form-grid">
             <!-- Works Council Section -->
             <div>
               <h3 style="margin-bottom: 16px; color: var(--secondary)">
@@ -654,7 +636,7 @@
         <div id="memberModalContent">
           <!-- Dynamic content -->
         </div>
-        <div style="margin-top: 20px; display: flex; gap: 12px">
+        <div class="modal-actions">
           <button class="btn btn-primary" onclick="saveMemberChanges()">
             Save Changes
           </button>

@@ -6,32 +6,34 @@
     <title>Member Portal - ZEHSSCWU</title>
     <link rel="stylesheet" href="css/styles.css" />
     <link rel="stylesheet" href="css/components.css" />
-    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="assets/images/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="assets/images/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="assets/images/favicon-16x16.png"
+    />
     <link rel="manifest" href="assets/images/site.webmanifest" />
   </head>
   <body>
     <!-- Header -->
-    <header style="background: var(--primary); color: white; padding: 16px 0">
-      <div class="container">
-        <div
-          style="
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-          "
-        >
-          <h1>ZEHSSCWU Member Portal</h1>
-          <div style="display: flex; align-items: center; gap: 16px">
-            <span class="welcome-board" id="memberWelcome"
-              >Welcome, Member</span
-            >
-            <button class="btn btn-primary" onclick="logout()">Logout</button>
-          </div>
-        </div>
+    <div class="header-container">
+      <h1>ZEHSSCWU Member Portal</h1>
+      <div class="header-actions">
+        <span class="welcome-board" id="memberWelcome">Welcome, Member</span>
+        <button class="btn btn-primary" onclick="logout()">Logout</button>
       </div>
-    </header>
+    </div>
 
     <!-- Main Content -->
     <div class="container" style="margin-top: 24px">
@@ -152,9 +154,7 @@
           </h2>
 
           <form id="updateProfileForm">
-            <div
-              style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px"
-            >
+            <div class="form-grid">
               <div class="form-group">
                 <label class="form-label">Full Name</label>
                 <input type="text" class="form-input" id="updateFullName" />
@@ -246,13 +246,7 @@
             Union Tools
           </h2>
 
-          <div
-            style="
-              display: grid;
-              grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-              gap: 20px;
-            "
-          >
+          <div class="form-grid">
             <!-- Tool Card 1 -->
             <div class="info-card">
               <h3 style="margin-bottom: 12px">Dues Calculator</h3>
