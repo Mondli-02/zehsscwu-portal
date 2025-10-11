@@ -41,19 +41,32 @@
     <div class="container" style="margin-top: 24px">
       <!-- Tabs Navigation -->
       <div class="tabs">
-        <div class="tab active" onclick="switchTab('profile')">Profile</div>
-        <div class="tab" onclick="switchTab('worksCouncil')">
-          Works Council & Committee
-        </div>
-        <div class="tab" onclick="switchTab('logPayment')">Log Payment</div>
-        <div class="tab" onclick="switchTab('updateProfile')">
-          Update Profile
-        </div>
-        <div class="tab" onclick="switchTab('memberSearch')">Member Search</div>
-        <div class="tab" onclick="switchTab('unionTools')">Union Tools</div>
-        <div class="tab" onclick="switchTab('addMember')">Add Member</div>
-        <div class="tab" onclick="switchTab('manageWorks')">
-          Manage Works Council
+        <!-- Update these lines in institution.html -->
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab('profile', event)">
+            Profile
+          </div>
+          <div class="tab" onclick="switchTab('worksCouncil', event)">
+            Works Council & Committee
+          </div>
+          <div class="tab" onclick="switchTab('logPayment', event)">
+            Log Payment
+          </div>
+          <div class="tab" onclick="switchTab('updateProfile', event)">
+            Update Profile
+          </div>
+          <div class="tab" onclick="switchTab('memberSearch', event)">
+            Member Search
+          </div>
+          <div class="tab" onclick="switchTab('unionTools', event)">
+            Union Tools
+          </div>
+          <div class="tab" onclick="switchTab('addMember', event)">
+            Add Member
+          </div>
+          <div class="tab" onclick="switchTab('manageWorks', event)">
+            Manage Works Council
+          </div>
         </div>
       </div>
 
@@ -136,7 +149,7 @@
 
           <button
             class="btn btn-primary"
-            onclick="switchTab('updateProfile')"
+            onclick="switchTab('updateProfile', event)"
             style="margin-top: 20px"
           >
             Update Profile

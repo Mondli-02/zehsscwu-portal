@@ -39,14 +39,19 @@
     <div class="container" style="margin-top: 24px">
       <!-- Tabs Navigation -->
       <div class="tabs">
-        <div class="tab active" onclick="switchTab('profile')">Profile</div>
-        <div class="tab" onclick="switchTab('worksCouncil')">
+        <!-- Update the onclick handlers in member.html -->
+        <div class="tab active" onclick="switchTab('profile', event)">
+          Profile
+        </div>
+        <div class="tab" onclick="switchTab('worksCouncil', event)">
           Works Council & Committee
         </div>
-        <div class="tab" onclick="switchTab('updateProfile')">
+        <div class="tab" onclick="switchTab('updateProfile', event)">
           Update Profile
         </div>
-        <div class="tab" onclick="switchTab('unionTools')">Union Tools</div>
+        <div class="tab" onclick="switchTab('unionTools', event)">
+          Union Tools
+        </div>
       </div>
 
       <!-- Profile Tab -->
@@ -111,7 +116,10 @@
             </div>
           </div>
 
-          <button class="btn btn-primary" onclick="switchTab('updateProfile')">
+          <button
+            class="btn btn-primary"
+            onclick="switchTab('updateProfile', event)"
+          >
             Update Profile
           </button>
         </div>
