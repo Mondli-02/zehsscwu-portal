@@ -212,7 +212,7 @@ function displayWorksData(container, members, type) {
 }
 
 // Tab switching function
-function switchTab(tabName) {
+function switchTab(tabName, event) {
     // Hide all tab contents
     document.querySelectorAll('.tab-content').forEach(tab => {
         tab.classList.remove('active');
@@ -226,14 +226,24 @@ function switchTab(tabName) {
     // Show selected tab content
     document.getElementById(tabName).classList.add('active');
 
-    // Add active class to clicked tab
-    event.target.classList.add('active');
-
-    // Load data for specific tabs
     if (tabName === 'manageWorks') {
         loadWorksManagement();
     }
+
+    // Add active class to clicked tab (if event exists)
+    if (event && event.target) {
+        event.target.classList.add('active');
+    } else {
+        // If called programmatically, find and activate the corresponding tab button
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            if (tab.getAttribute('onclick').includes(tabName)) {
+                tab.classList.add('active');
+            }
+        });
+    }
 }
+
 
 // Update institution profile form
 document.getElementById('updateInstitutionForm')?.addEventListener('submit', async (e) => {
@@ -612,7 +622,7 @@ function displayPendingRequests(requests) {
 }
 
 // Update the switchTab function to load pending requests
-function switchTab(tabName) {
+function switchTab(tabName, event) {
     // Hide all tab contents
     document.querySelectorAll('.tab-content').forEach(tab => {
         tab.classList.remove('active');
@@ -626,8 +636,18 @@ function switchTab(tabName) {
     // Show selected tab content
     document.getElementById(tabName).classList.add('active');
 
-    // Add active class to clicked tab
-    event.target.classList.add('active');
+    // Add active class to clicked tab (if event exists)
+    if (event && event.target) {
+        event.target.classList.add('active');
+    } else {
+        // If called programmatically, find and activate the corresponding tab button
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            if (tab.getAttribute('onclick').includes(tabName)) {
+                tab.classList.add('active');
+            }
+        });
+    }
 
     // Load data for specific tabs
     if (tabName === 'manageWorks') {
@@ -636,7 +656,6 @@ function switchTab(tabName) {
         loadPendingRequests();
     }
 }
-
 
 // Works Council & Committee Management
 async function loadWorksManagement() {

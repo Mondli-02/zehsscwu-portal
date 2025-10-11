@@ -178,7 +178,8 @@ async function loadWorksData(institutionId) {
 }
 
 // Tab switching function
-function switchTab(tabName) {
+// Updated tab switching function
+function switchTab(tabName, event) {
     // Hide all tab contents
     document.querySelectorAll('.tab-content').forEach(tab => {
         tab.classList.remove('active');
@@ -192,8 +193,18 @@ function switchTab(tabName) {
     // Show selected tab content
     document.getElementById(tabName).classList.add('active');
 
-    // Add active class to clicked tab
-    event.target.classList.add('active');
+    // Add active class to clicked tab (if event exists)
+    if (event && event.target) {
+        event.target.classList.add('active');
+    } else {
+        // If called programmatically, find and activate the corresponding tab button
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            if (tab.getAttribute('onclick').includes(tabName)) {
+                tab.classList.add('active');
+            }
+        });
+    }
 }
 
 // Update profile form submission
