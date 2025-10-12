@@ -103,14 +103,193 @@ function hideLoading() {
     });
 }
 
-function showError(message) {
-    alert('Error: ' + message);
-}
-
+// CENTERED POPUP SYSTEM
 function showSuccess(message) {
-    alert('Success: ' + message);
+    showCenteredPopup(message, 'success');
 }
 
+function showError(message) {
+    showCenteredPopup(message, 'error');
+}
+
+function showWarning(message) {
+    showCenteredPopup(message, 'warning');
+}
+
+function showInfo(message) {
+    showCenteredPopup(message, 'info');
+}
+
+function showCenteredPopup(message, type = 'info') {
+    // Remove any existing popup
+    const existingPopup = document.querySelector('.popup-overlay');
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+
+    // Create popup overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'popup-overlay';
+
+    // Create popup container
+    const popup = document.createElement('div');
+    popup.className = `popup-container popup-${type}`;
+
+    // Icon based on type
+    const icons = {
+        success: '✓',
+        error: '✕',
+        warning: '⚠',
+        info: 'ℹ'
+    };
+
+    popup.innerHTML = `
+        <div class="popup-icon">${icons[type]}</div>
+        <div class="popup-message">${message}</div>
+        <button class="popup-close-btn" onclick="closeCenteredPopup()">OK</button>
+    `;
+
+    overlay.appendChild(popup);
+    document.body.appendChild(overlay);
+
+    // Auto close after 5 seconds
+    setTimeout(() => {
+        closeCenteredPopup();
+    }, 5000);
+
+    // Close on overlay click
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            closeCenteredPopup();
+        }
+    });
+
+    // Add popup styles if not already added
+    addPopupStyles();
+}
+
+function closeCenteredPopup() {
+    const popup = document.querySelector('.popup-overlay');
+    if (popup) {
+        popup.style.animation = 'fadeIn 0.2s ease-out reverse';
+        setTimeout(() => {
+            popup.remove();
+        }, 200);
+    }
+}
+
+function addPopupStyles() {
+    // Check if styles already exist
+    if (document.getElementById('popup-styles')) return;
+
+    const style = document.createElement('style');
+    style.id = 'popup-styles';
+    style.textContent = `
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            animation: fadeIn 0.2s ease-in;
+        }
+
+        .popup-container {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.3s ease-out;
+            position: relative;
+        }
+
+        .popup-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .popup-success .popup-icon {
+            background: #d1fae5;
+            color: #10b981;
+        }
+
+        .popup-error .popup-icon {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        .popup-warning .popup-icon {
+            background: #fef3c7;
+            color: #f59e0b;
+        }
+
+        .popup-info .popup-icon {
+            background: #dbeafe;
+            color: #3b82f6;
+        }
+
+        .popup-message {
+            text-align: center;
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .popup-close-btn {
+            width: 100%;
+            padding: 10px 20px;
+            background: var(--primary, #2563eb);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .popup-close-btn:hover {
+            opacity: 0.9;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    `;
+
+    document.head.appendChild(style);
+}
+
+// ============================================
+// UTILITY FUNCTIONS
+// ============================================
 function formatDate(dateString) {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString();
