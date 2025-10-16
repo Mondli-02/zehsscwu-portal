@@ -123,6 +123,30 @@
             <h3 style="margin-bottom: 16px; color: var(--secondary)">
               Search Results
             </h3>
+            <!-- Add this after the Search Results section in the Dashboard tab -->
+<!-- Enhanced Bulk Download Options -->
+<div class="info-card" style="margin-top: 24px;">
+    <h3 style="margin-bottom: 16px; color: var(--secondary)">
+        Bulk Download Options
+    </h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px;">
+        <button class="btn btn-primary" onclick="downloadFilteredInstitutions()">
+            📥 Download Institutions
+            <small style="display: block; font-size: 0.8em; opacity: 0.8;" id="institutionsDownloadLabel">
+                All
+            </small>
+        </button>
+        <button class="btn btn-primary" onclick="downloadFilteredMembers()">
+            📥 Download Members
+            <small style="display: block; font-size: 0.8em; opacity: 0.8;" id="membersDownloadLabel">
+                All
+            </small>
+        </button>
+    </div>
+    <p style="margin-top: 12px; font-size: 0.9em; color: var(--secondary);">
+        <strong>Tip:</strong> Perform a search first to download filtered results, or download all data directly.
+    </p>
+</div>
             <div class="table-wrapper" style="overflow-x: auto">
                 <table class="data-table">
                 <thead>
@@ -143,6 +167,7 @@
           </div>
         </div>
       </div>
+      
 
       <!-- Institution Profiles Tab -->
       <div id="institutionProfiles" class="tab-content">
@@ -779,21 +804,23 @@
     </div>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/admin.js"></script>
-    <script>
-      // Initialize Supabase
-      const supabaseUrl = "https://wugbnnyyovblandiqqqp.supabase.co";
-      const supabaseKey =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1Z2Jubnl5b3ZibGFuZGlxcXFwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1OTc1MDU3NCwiZXhwIjoyMDc1MzI2NTc0fQ.yT7QgVyPkHZxyBBEnNUU8Mf4Q8tXbihhXc-sS7cQ3Fc";
-      const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/downloads.js"></script>
+<script>
+  // Initialize Supabase
+  const supabaseUrl = "https://wugbnnyyovblandiqqqp.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1Z2Jubnl5b3ZibGFuZGlxcXFwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1OTc1MDU3NCwiZXhwIjoyMDc1MzI2NTc0fQ.yT7QgVyPkHZxyBBEnNUU8Mf4Q8tXbihhXc-sS7cQ3Fc";
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-      // Initialize admin dashboard when page loads
-      document.addEventListener("DOMContentLoaded", function () {
-        initializeAdminDashboard();
-      });
-    </script>
+  // Initialize admin dashboard when page loads
+  document.addEventListener("DOMContentLoaded", function () {
+    initializeAdminDashboard();
+  });
+</script>
   </body>
 </html>
