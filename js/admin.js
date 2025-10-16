@@ -6,6 +6,12 @@ let selectedMemberAdmin = null;
 let selectedInstitution = null;
 let addedMembers = [];
 
+// These track searching state to modify download functionality
+let currentInstitutionSearchResults = [];
+let currentMemberSearchResults = [];
+let currentAdminSearchResults = [];
+let currentSearchType = null;
+
 async function initializeAdminDashboard() {
     showLoading();
 
@@ -30,6 +36,8 @@ async function initializeAdminDashboard() {
 
         // Update welcome message
         document.getElementById('adminWelcome').textContent = `Welcome, Admin`;
+
+        
 
         hideLoading();
 
@@ -492,26 +500,80 @@ document.getElementById('adminSearchForm')?.addEventListener('submit', async (e)
     await performAdminSearch(searchType, searchTerm, branch);
 });
 
+// Update the performAdminSearch function
 async function performAdminSearch(searchType, searchTerm, branch) {
     showLoading();
 
     try {
         let results = [];
+        currentSearchType = searchType;
 
         switch (searchType) {
             case 'institution':
                 results = await searchInstitutionsAdmin(searchTerm, branch);
+                currentAdminSearchResults = results;
                 break;
             case 'member':
                 results = await searchMembersAdmin(searchTerm, branch);
+                currentAdminSearchResults = results;
                 break;
             case 'memberByJob':
                 results = await searchMembersByJobAdmin(searchTerm, branch);
+                currentAdminSearchResults = results;
                 break;
         }
 
         displayAdminSearchResults(results, searchType);
         hideLoading();
+        updateDownloadButtonLabels();
+
+    } catch (error) {
+        hideLoading();
+        showError('Search failed: ' + error.message);
+    }
+}
+
+// Update the searchInstitutions function
+function searchInstitutions() {
+    const searchTerm = document.getElementById('institutionSearch').value.toLowerCase();
+    const filtered = allInstitutions.filter(inst =>
+        inst.institution_name.toLowerCase().includes(searchTerm)
+    );
+    currentInstitutionSearchResults = filtered;
+    displayInstitutionsTable(filtered);
+    updateDownloadButtonLabels();
+}
+
+// Update the searchMembersAdminAdvanced function
+async function searchMembersAdminAdvanced(name, jobTitle, grade, institution) {
+    showLoading();
+
+    try {
+        let query = supabase
+            .from('members')
+            .select('*, institutions(institution_name)');
+
+        if (name) {
+            query = query.ilike('full_name', `%${name}%`);
+        }
+        if (jobTitle) {
+            query = query.ilike('job_title', `%${jobTitle}%`);
+        }
+        if (grade) {
+            query = query.ilike('grade', `%${grade}%`);
+        }
+        if (institution) {
+            query = query.ilike('institutions.institution_name', `%${institution}%`);
+        }
+
+        const { data: members, error } = await query;
+
+        if (error) throw error;
+
+        currentMemberSearchResults = members || [];
+        displayMembersAdminTable(currentMemberSearchResults);
+        hideLoading();
+        updateDownloadButtonLabels();
 
     } catch (error) {
         hideLoading();
@@ -534,6 +596,9 @@ async function searchInstitutionsAdmin(searchTerm, branch) {
     const { data, error } = await query;
     if (error) throw error;
 
+    // Update the tracking variable for dashboard searches
+    currentInstitutionSearchResults = data;
+
     return data.map(inst => ({ ...inst, type: 'institution' }));
 }
 
@@ -552,6 +617,9 @@ async function searchMembersAdmin(searchTerm, branch) {
     const { data, error } = await query;
     if (error) throw error;
 
+    // Update the tracking variable for dashboard searches
+    currentMemberSearchResults = data;
+
     return data.map(member => ({ ...member, type: 'member' }));
 }
 
@@ -569,6 +637,9 @@ async function searchMembersByJobAdmin(jobTitle, branch) {
 
     const { data, error } = await query;
     if (error) throw error;
+
+    // Update the tracking variable for dashboard searches
+    currentMemberSearchResults = data;
 
     return data.map(member => ({ ...member, type: 'member' }));
 }
@@ -625,7 +696,9 @@ function searchInstitutions() {
 
 function clearInstitutionSearch() {
     document.getElementById('institutionSearch').value = '';
+    currentInstitutionSearchResults = []; // Clear the search results
     displayInstitutionsTable(allInstitutions);
+    updateDownloadButtonLabels();
 }
 
 // Member search for admin
@@ -679,7 +752,9 @@ function clearMemberAdminSearch() {
     document.getElementById('adminMemberSearchJob').value = '';
     document.getElementById('adminMemberSearchGrade').value = '';
     document.getElementById('adminMemberSearchInstitution').value = '';
+    currentMemberSearchResults = []; // Clear the search results
     displayMembersAdminTable(allMembers);
+    updateDownloadButtonLabels(); // Add this line
 }
 
 // Institution profile modal
@@ -700,6 +775,10 @@ async function viewInstitutionProfile(institutionId) {
 
         selectedInstitution = institution;
         displayInstitutionModal(institution);
+
+        // Load works council and committee data
+        await loadAdminWorksData(institutionId);
+
         hideLoading();
 
     } catch (error) {
@@ -708,45 +787,265 @@ async function viewInstitutionProfile(institutionId) {
     }
 }
 
+async function loadAdminWorksData(institutionId) {
+    try {
+        // Load works council members
+        const { data: councilMembers, error: councilError } = await supabase
+            .from('works_councils')
+            .select(`
+                id, rank,
+                members (id, member_id, full_name)
+            `)
+            .eq('institution_id', institutionId);
+
+        if (councilError) throw councilError;
+
+        // Load works committee members
+        const { data: committeeMembers, error: committeeError } = await supabase
+            .from('works_committees')
+            .select(`
+                id, rank,
+                members (id, member_id, full_name)
+            `)
+            .eq('institution_id', institutionId);
+
+        if (committeeError) throw committeeError;
+
+        // Display works council
+        const councilContainer = document.getElementById('adminCurrentWorksCouncil');
+        if (councilContainer) {
+            councilContainer.innerHTML = councilMembers && councilMembers.length > 0 ? `
+                <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px;">
+                    <h5 style="margin-bottom: 8px;">Current Members:</h5>
+                    ${councilMembers.map(member => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; 
+                                    padding: 8px; background: #f9fafb; border-radius: 4px; margin-bottom: 8px;">
+                            <div>
+                                <strong>${member.members.full_name}</strong><br>
+                                <small style="color: var(--secondary);">${member.rank}</small>
+                            </div>
+                            <button class="btn" style="background: var(--error); color: white; padding: 4px 8px; font-size: 0.8rem;" 
+                                    onclick="adminRemoveFromWorksCouncil('${member.id}', '${institutionId}')">
+                                Remove
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+            ` : '<p style="color: var(--secondary); font-size: 0.9rem;">No Works Council members yet.</p>';
+        }
+
+        // Display works committee
+        const committeeContainer = document.getElementById('adminCurrentWorksCommittee');
+        if (committeeContainer) {
+            committeeContainer.innerHTML = committeeMembers && committeeMembers.length > 0 ? `
+                <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px;">
+                    <h5 style="margin-bottom: 8px;">Current Members:</h5>
+                    ${committeeMembers.map(member => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; 
+                                    padding: 8px; background: #f9fafb; border-radius: 4px; margin-bottom: 8px;">
+                            <div>
+                                <strong>${member.members.full_name}</strong><br>
+                                <small style="color: var(--secondary);">${member.rank}</small>
+                            </div>
+                            <button class="btn" style="background: var(--error); color: white; padding: 4px 8px; font-size: 0.8rem;" 
+                                    onclick="adminRemoveFromWorksCommittee('${member.id}', '${institutionId}')">
+                                Remove
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+            ` : '<p style="color: var(--secondary); font-size: 0.9rem;">No Works Committee members yet.</p>';
+        }
+
+    } catch (error) {
+        console.error('Error loading works data:', error);
+    }
+}
+
+async function adminAddToWorksCouncil(institutionId) {
+    const memberId = document.getElementById('adminWorksCouncilMember').value;
+    const rank = document.getElementById('adminWorksCouncilRank').value;
+
+    if (!memberId || !rank) {
+        showError('Please select a member and enter a rank');
+        return;
+    }
+
+    showLoading();
+
+    try {
+        const { error } = await supabase
+            .from('works_councils')
+            .insert({
+                institution_id: institutionId,
+                member_id: memberId,
+                rank: rank
+            });
+
+        if (error) throw error;
+
+        hideLoading();
+        showSuccess('Member added to Works Council successfully!');
+
+        // Clear inputs
+        document.getElementById('adminWorksCouncilMember').value = '';
+        document.getElementById('adminWorksCouncilRank').value = '';
+
+        // Reload works data
+        await loadAdminWorksData(institutionId);
+
+    } catch (error) {
+        hideLoading();
+        showError('Failed to add to Works Council: ' + error.message);
+    }
+}
+
+async function adminAddToWorksCommittee(institutionId) {
+    const memberId = document.getElementById('adminWorksCommitteeMember').value;
+    const rank = document.getElementById('adminWorksCommitteeRank').value;
+
+    if (!memberId || !rank) {
+        showError('Please select a member and enter a rank');
+        return;
+    }
+
+    showLoading();
+
+    try {
+        const { error } = await supabase
+            .from('works_committees')
+            .insert({
+                institution_id: institutionId,
+                member_id: memberId,
+                rank: rank
+            });
+
+        if (error) throw error;
+
+        hideLoading();
+        showSuccess('Member added to Works Committee successfully!');
+
+        // Clear inputs
+        document.getElementById('adminWorksCommitteeMember').value = '';
+        document.getElementById('adminWorksCommitteeRank').value = '';
+
+        // Reload works data
+        await loadAdminWorksData(institutionId);
+
+    } catch (error) {
+        hideLoading();
+        showError('Failed to add to Works Committee: ' + error.message);
+    }
+}
+
+async function adminRemoveFromWorksCouncil(worksCouncilId, institutionId) {
+    if (!confirm('Are you sure you want to remove this member from Works Council?')) {
+        return;
+    }
+
+    showLoading();
+
+    try {
+        const { error } = await supabase
+            .from('works_councils')
+            .delete()
+            .eq('id', worksCouncilId);
+
+        if (error) throw error;
+
+        hideLoading();
+        showSuccess('Member removed from Works Council!');
+
+        await loadAdminWorksData(institutionId);
+
+    } catch (error) {
+        hideLoading();
+        showError('Failed to remove member: ' + error.message);
+    }
+}
+
+async function adminRemoveFromWorksCommittee(worksCommitteeId, institutionId) {
+    if (!confirm('Are you sure you want to remove this member from Works Committee?')) {
+        return;
+    }
+
+    showLoading();
+
+    try {
+        const { error } = await supabase
+            .from('works_committees')
+            .delete()
+            .eq('id', worksCommitteeId);
+
+        if (error) throw error;
+
+        hideLoading();
+        showSuccess('Member removed from Works Committee!');
+
+        await loadAdminWorksData(institutionId);
+
+    } catch (error) {
+        hideLoading();
+        showError('Failed to remove member: ' + error.message);
+    }
+}
+
 function displayInstitutionModal(institution) {
     const modalContent = document.getElementById('institutionModalContent');
 
     modalContent.innerHTML = `
-        <div class="info-card">
-            <h3 style="margin-bottom: 16px; color: var(--secondary);">Institution Details</h3>
-            <div class="info-row">
-                <span class="info-label">Institution ID</span>
-                <span class="info-value">${institution.institution_id}</span>
+        <form id="editInstitutionForm">
+            <div class="info-card">
+                <h3 style="margin-bottom: 16px; color: var(--secondary);">Institution Details</h3>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Institution ID</label>
+                        <input type="text" class="form-input" value="${institution.institution_id}" readonly 
+                               style="background: #f5f5f5;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Institution Name</label>
+                        <input type="text" class="form-input" id="editInstName" 
+                               value="${institution.institution_name}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="editInstEmail" 
+                               value="${institution.email || ''}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Landline</label>
+                        <input type="tel" class="form-input" id="editInstLandline" 
+                               value="${institution.landline || ''}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Head Contact</label>
+                        <input type="tel" class="form-input" id="editInstHead" 
+                               value="${institution.head_contact || ''}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Bursar Contact</label>
+                        <input type="tel" class="form-input" id="editInstBursar" 
+                               value="${institution.bursar_contact || ''}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Branch</label>
+                        <select class="form-select" id="editInstBranch">
+                            <option value="Matabeleland North" ${institution.branch === 'Matabeleland North' ? 'selected' : ''}>Matabeleland North</option>
+                            <option value="Matabeleland South" ${institution.branch === 'Matabeleland South' ? 'selected' : ''}>Matabeleland South</option>
+                            <option value="Bulawayo" ${institution.branch === 'Bulawayo' ? 'selected' : ''}>Bulawayo</option>
+                        </select>
+                    </div>
+                </div>
             </div>
-            <div class="info-row">
-                <span class="info-label">Institution Name</span>
-                <span class="info-value">${institution.institution_name}</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Email</span>
-                <span class="info-value">${institution.email || '-'}</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Landline</span>
-                <span class="info-value">${institution.landline || '-'}</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Head Contact</span>
-                <span class="info-value">${institution.head_contact || '-'}</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Bursar Contact</span>
-                <span class="info-value">${institution.bursar_contact || '-'}</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Branch</span>
-                <span class="info-value">${institution.branch || '-'}</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Total Members</span>
-                <span class="info-value">${institution.total_members || 0}</span>
-            </div>
-        </div>
+        </form>
         
         <div class="info-card" style="margin-top: 20px;">
             <h3 style="margin-bottom: 16px; color: var(--secondary);">Members (${institution.members?.length || 0})</h3>
@@ -788,16 +1087,145 @@ function displayInstitutionModal(institution) {
                 <p style="text-align: center; color: var(--secondary);">No members found for this institution</p>
             `}
         </div>
-        
-        <div style="margin-top: 20px; display: flex; gap: 12px;">
-            <button class="btn" style="background: var(--error); color: white;" 
-                    onclick="deleteInstitution('${institution.id}')">
-                Delete Institution
-            </button>
+
+        <div class="info-card" style="margin-top: 20px;">
+            <h3 style="margin-bottom: 16px; color: var(--secondary);">Works Council & Committee Management</h3>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <!-- Works Council Section -->
+                <div>
+                    <h4 style="margin-bottom: 12px;">Works Council</h4>
+                    <div class="form-group">
+                        <label class="form-label">Add Member to Council</label>
+                        <select class="form-select" id="adminWorksCouncilMember">
+                            <option value="">Select Member</option>
+                            ${institution.members?.map(m => `
+                                <option value="${m.id}">${m.full_name} (${m.member_id})</option>
+                            `).join('') || ''}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Rank/Position</label>
+                        <input type="text" class="form-input" id="adminWorksCouncilRank" 
+                               placeholder="e.g., Chairperson">
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="adminAddToWorksCouncil('${institution.id}')" 
+                            style="width: 100%; margin-bottom: 16px;">
+                        Add to Works Council
+                    </button>
+                    
+                    <div id="adminCurrentWorksCouncil">
+                        <!-- Dynamic content loaded by loadAdminWorksData() -->
+                    </div>
+                </div>
+                
+                <!-- Works Committee Section -->
+                <div>
+                    <h4 style="margin-bottom: 12px;">Works Committee</h4>
+                    <div class="form-group">
+                        <label class="form-label">Add Member to Committee</label>
+                        <select class="form-select" id="adminWorksCommitteeMember">
+                            <option value="">Select Member</option>
+                            ${institution.members?.map(m => `
+                                <option value="${m.id}">${m.full_name} (${m.member_id})</option>
+                            `).join('') || ''}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Rank/Position</label>
+                        <input type="text" class="form-input" id="adminWorksCommitteeRank" 
+                               placeholder="e.g., Secretary">
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="adminAddToWorksCommittee('${institution.id}')" 
+                            style="width: 100%; margin-bottom: 16px;">
+                        Add to Works Committee
+                    </button>
+                    
+                    <div id="adminCurrentWorksCommittee">
+                        <!-- Dynamic content loaded by loadAdminWorksData() -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <!-- Download Options -->
+            <div style="background: #f9fafb; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                <h4 style="margin-bottom: 12px;">Download Options</h4>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="btn btn-secondary" onclick="downloadSingleInstitution('${institution.id}')" 
+                            style="font-size: 0.9rem;">
+                        📥 Download Institution (Excel)
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadInstitutionMembers('${institution.id}')" 
+                            style="font-size: 0.9rem;">
+                        📥 Download Members (Excel)
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadInstitutionComplete('${institution.id}')" 
+                            style="font-size: 0.9rem;">
+                        📥 Download Complete Report (Excel)
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div style="display: flex; gap: 12px; justify-content: space-between;">
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn btn-primary" onclick="saveInstitutionChanges()">
+                        Save Changes
+                    </button>
+                    <button class="btn btn-secondary" onclick="closeInstitutionModal()">
+                        Cancel
+                    </button>
+                </div>
+                <button class="btn" style="background: var(--error); color: white;" 
+                        onclick="deleteInstitution('${institution.id}')">
+                    Delete Institution
+                </button>
+            </div>
         </div>
     `;
 
     document.getElementById('institutionModal').style.display = 'block';
+}
+
+async function saveInstitutionChanges() {
+    showLoading();
+
+    try {
+        const updateData = {
+            institution_name: document.getElementById('editInstName').value,
+            email: document.getElementById('editInstEmail').value,
+            landline: document.getElementById('editInstLandline').value,
+            head_contact: document.getElementById('editInstHead').value,
+            bursar_contact: document.getElementById('editInstBursar').value,
+            branch: document.getElementById('editInstBranch').value,
+            updated_at: new Date().toISOString()
+        };
+
+        const { error } = await supabase
+            .from('institutions')
+            .update(updateData)
+            .eq('id', selectedInstitution.id);
+
+        if (error) throw error;
+
+        hideLoading();
+        showSuccess('Institution profile updated successfully!');
+        closeInstitutionModal();
+
+        // Reload institutions data
+        await loadAllInstitutions();
+        await loadSystemStats();
+
+    } catch (error) {
+        hideLoading();
+        showError('Failed to update institution profile: ' + error.message);
+    }
 }
 
 function closeInstitutionModal() {
@@ -1552,5 +1980,300 @@ function contactAdminSupport() {
 function clearAdminSearch() {
     document.getElementById('searchTerm').value = '';
     document.getElementById('searchBranch').value = '';
+
+    // Clear ALL search tracking variables
+    currentAdminSearchResults = [];
+    currentInstitutionSearchResults = [];
+    currentMemberSearchResults = [];
+    currentSearchType = null;
+
     document.getElementById('adminSearchResultsBody').innerHTML = '';
+    updateDownloadButtonLabels();
+}
+
+// ==================== DOWNLOAD FUNCTIONS ====================
+
+// Download single institution basic info
+async function downloadSingleInstitution(institutionId) {
+    showLoading();
+    try {
+        const { data: institution, error } = await supabase
+            .from('institutions')
+            .select('*')
+            .eq('id', institutionId)
+            .single();
+
+        if (error) throw error;
+
+        const formattedData = [formatInstitutionForDownload(institution)];
+        const filename = `${institution.institution_id}_Profile_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+        downloadExcel(formattedData, filename, 'Institution Profile');
+
+        hideLoading();
+        showSuccess('Institution profile downloaded successfully!');
+    } catch (error) {
+        hideLoading();
+        showError('Failed to download: ' + error.message);
+    }
+}
+
+// Download institution members only - Updated to Excel format
+async function downloadInstitutionMembers(institutionId) {
+    showLoading();
+    try {
+        const { data: members, error } = await supabase
+            .from('members')
+            .select('*, institutions(institution_name)')
+            .eq('institution_id', institutionId);
+
+        if (error) throw error;
+
+        if (!members || members.length === 0) {
+            hideLoading();
+            showError('No members found for this institution');
+            return;
+        }
+
+        const formattedData = members.map(formatMemberForDownload);
+        const institution = members[0].institutions.institution_name.replace(/\s+/g, '_');
+        const filename = `${institution}_Members_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+        // Changed from downloadCSV to downloadExcel
+        downloadExcel(formattedData, filename, 'Members');
+
+        hideLoading();
+        showSuccess('Members downloaded successfully in Excel format!');
+    } catch (error) {
+        hideLoading();
+        showError('Failed to download: ' + error.message);
+    }
+}
+
+// Download complete institution report (institution + members + works council + works committee)
+async function downloadInstitutionComplete(institutionId) {
+    showLoading();
+    try {
+        // Get institution data
+        const { data: institution, error: instError } = await supabase
+            .from('institutions')
+            .select('*')
+            .eq('id', institutionId)
+            .single();
+
+        if (instError) throw instError;
+
+        // Get members
+        const { data: members, error: memError } = await supabase
+            .from('members')
+            .select('*, institutions(institution_name)')
+            .eq('institution_id', institutionId);
+
+        if (memError) throw memError;
+
+        // Get works council
+        const { data: council, error: councilError } = await supabase
+            .from('works_councils')
+            .select(`
+                rank,
+                members(member_id, full_name),
+                institutions(institution_name)
+            `)
+            .eq('institution_id', institutionId);
+
+        if (councilError) throw councilError;
+
+        // Get works committee
+        const { data: committee, error: committeeError } = await supabase
+            .from('works_committees')
+            .select(`
+                rank,
+                members(member_id, full_name),
+                institutions(institution_name)
+            `)
+            .eq('institution_id', institutionId);
+
+        if (committeeError) throw committeeError;
+
+        // Format data for multiple sheets
+        const sheets = [
+            {
+                name: 'Institution Profile',
+                data: [formatInstitutionForDownload(institution)]
+            },
+            {
+                name: 'Members',
+                data: members.map(formatMemberForDownload)
+            },
+            {
+                name: 'Works Council',
+                data: council.length > 0 ? formatWorksForDownload(council, 'Works Council') : [{ 'Message': 'No Works Council members' }]
+            },
+            {
+                name: 'Works Committee',
+                data: committee.length > 0 ? formatWorksForDownload(committee, 'Works Committee') : [{ 'Message': 'No Works Committee members' }]
+            }
+        ];
+
+        const filename = `${institution.institution_id}_Complete_Report_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+        downloadExcelMultiSheet(sheets, filename);
+
+        hideLoading();
+        showSuccess('Complete report downloaded successfully!');
+    } catch (error) {
+        hideLoading();
+        showError('Failed to download: ' + error.message);
+    }
+}
+
+// Download all institutions
+async function downloadAllInstitutions() {
+    showLoading();
+    try {
+        const { data: institutions, error } = await supabase
+            .from('institutions')
+            .select('*')
+            .order('institution_name');
+
+        if (error) throw error;
+
+        const formattedData = institutions.map(formatInstitutionForDownload);
+        const filename = `All_Institutions_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+        downloadExcel(formattedData, filename, 'All Institutions');
+
+        hideLoading();
+        showSuccess('All institutions downloaded successfully!');
+    } catch (error) {
+        hideLoading();
+        showError('Failed to download: ' + error.message);
+    }
+}
+
+// Download all members across all institutions
+async function downloadAllMembers() {
+    showLoading();
+    try {
+        const { data: members, error } = await supabase
+            .from('members')
+            .select('*, institutions(institution_name)')
+            .order('full_name');
+
+        if (error) throw error;
+
+        const formattedData = members.map(formatMemberForDownload);
+        const filename = `All_Members_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+        downloadExcel(formattedData, filename, 'All Members');
+
+        hideLoading();
+        showSuccess('All members downloaded successfully!');
+    } catch (error) {
+        hideLoading();
+        showError('Failed to download: ' + error.message);
+    }
+}
+
+// Enhanced download functions that check for active filters
+async function downloadFilteredInstitutions() {
+    showLoading();
+    try {
+        let institutionsToDownload;
+        let filename;
+
+        // Check if we have active institution search results
+        if (currentInstitutionSearchResults.length > 0) {
+            institutionsToDownload = currentInstitutionSearchResults;
+            filename = `Filtered_Institutions_${new Date().toISOString().split('T')[0]}.xlsx`;
+            showSuccess('Downloading filtered institutions...');
+        } else if (currentAdminSearchResults.length > 0 && currentSearchType === 'institution') {
+            institutionsToDownload = currentAdminSearchResults;
+            filename = `Searched_Institutions_${new Date().toISOString().split('T')[0]}.xlsx`;
+            showSuccess('Downloading searched institutions...');
+        } else {
+            // Fall back to all institutions
+            const { data: institutions, error } = await supabase
+                .from('institutions')
+                .select('*')
+                .order('institution_name');
+
+            if (error) throw error;
+
+            institutionsToDownload = institutions;
+            filename = `All_Institutions_${new Date().toISOString().split('T')[0]}.xlsx`;
+            showSuccess('Downloading all institutions...');
+        }
+
+        const formattedData = institutionsToDownload.map(formatInstitutionForDownload);
+        downloadExcel(formattedData, filename, 'Institutions');
+
+        hideLoading();
+
+    } catch (error) {
+        hideLoading();
+        showError('Failed to download: ' + error.message);
+    }
+}
+
+async function downloadFilteredMembers() {
+    showLoading();
+    try {
+        let membersToDownload;
+        let filename;
+
+        // Check for active member search results
+        if (currentMemberSearchResults.length > 0) {
+            membersToDownload = currentMemberSearchResults;
+            filename = `Filtered_Members_${new Date().toISOString().split('T')[0]}.xlsx`;
+            showSuccess('Downloading filtered members...');
+        }
+        // Check for admin search results
+        else if (currentAdminSearchResults.length > 0 && currentSearchType?.includes('member')) {
+            membersToDownload = currentAdminSearchResults;
+            filename = `Searched_Members_${new Date().toISOString().split('T')[0]}.xlsx`;
+            showSuccess('Downloading searched members...');
+        } else {
+            // Fall back to all members
+            const { data: members, error } = await supabase
+                .from('members')
+                .select('*, institutions(institution_name)')
+                .order('full_name');
+
+            if (error) throw error;
+
+            membersToDownload = members;
+            filename = `All_Members_${new Date().toISOString().split('T')[0]}.xlsx`;
+            showSuccess('Downloading all members...');
+        }
+
+        const formattedData = membersToDownload.map(formatMemberForDownload);
+        downloadExcel(formattedData, filename, 'Members');
+
+        hideLoading();
+
+    } catch (error) {
+        hideLoading();
+        showError('Failed to download: ' + error.message);
+    }
+}
+
+function updateDownloadButtonLabels() {
+    const institutionLabel = document.getElementById('institutionsDownloadLabel');
+    const membersLabel = document.getElementById('membersDownloadLabel');
+
+    if (institutionLabel) {
+        const label = currentInstitutionSearchResults.length > 0 ? 'Filtered' : 'All';
+        institutionLabel.textContent = label;
+    }
+
+    if (membersLabel) {
+        let label = 'All';
+        if (currentMemberSearchResults.length > 0) {
+            label = 'Filtered';
+        } else if (currentAdminSearchResults.length > 0 && currentSearchType?.includes('member')) {
+            label = 'Searched';
+        }
+        membersLabel.textContent = label;
+    }
 }
