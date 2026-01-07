@@ -1548,3 +1548,187 @@ select:focus-visible {
 @media (prefers-color-scheme: dark) {
   /* Add dark mode styles here if needed in the future */
 }
+
+/* ============================================
+   MOBILE BOTTOM NAVIGATION BAR
+   Add this to the END of your components.css
+   ============================================ */
+
+/* Bottom Navigation Bar */
+.bottom-nav {
+  display: none; /* Hidden on desktop */
+}
+
+@media (max-width: 768px) {
+  /* Show bottom nav on mobile */
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--union-white);
+    border-top: 2px solid var(--border);
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+    z-index: 999;
+    padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  /* Hide the traditional tabs on mobile */
+  .tabs {
+    display: none;
+  }
+
+  /* Bottom nav items */
+  .bottom-nav-item,
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--secondary);
+    text-decoration: none;
+    min-height: 56px;
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .bottom-nav-item::before,
+  .nav-item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--union-blue), var(--union-red));
+    transition: width 0.3s ease;
+    border-radius: 0 0 3px 3px;
+  }
+
+  .bottom-nav-item.active::before,
+  .nav-item.active::before {
+    width: 60%;
+  }
+
+  .bottom-nav-item:active,
+  .nav-item:active {
+    transform: scale(0.95);
+  }
+
+  /* Icon container */
+  .bottom-nav-icon,
+  .nav-icon {
+    font-size: 24px;
+    line-height: 1;
+    transition: all 0.3s ease;
+  }
+
+  /* Label */
+  .bottom-nav-label,
+  .nav-label {
+    font-size: 11px;
+    font-weight: 500;
+    font-family: "Montserrat", sans-serif;
+    text-align: center;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+
+  /* Active state */
+  .bottom-nav-item.active,
+  .nav-item.active {
+    color: var(--union-blue);
+  }
+
+  .bottom-nav-item.active .bottom-nav-icon,
+  .bottom-nav-item.active .nav-icon,
+  .nav-item.active .nav-icon {
+    transform: scale(1.1);
+  }
+
+  .bottom-nav-item.active .bottom-nav-label,
+  .bottom-nav-item.active .nav-label,
+  .nav-item.active .nav-label {
+    font-weight: 600;
+  }
+
+  /* Add padding to content to account for bottom nav */
+  body {
+    padding-bottom: 80px;
+  }
+
+  /* Adjust support button to not overlap with bottom nav */
+  .support-btn {
+    bottom: max(90px, calc(90px + env(safe-area-inset-bottom)));
+  }
+}
+
+/* SVG Icon styles */
+.nav-icon {
+  width: 26px;
+  height: 26px;
+  fill: currentColor;
+  transition: all 0.3s ease;
+}
+
+.bottom-nav-item.active .nav-icon,
+.nav-item.active .nav-icon {
+  fill: var(--union-blue);
+}
+
+/* Very small screens */
+@media (max-width: 480px) {
+  .bottom-nav-label,
+  .nav-label {
+    font-size: 10px;
+  }
+
+  .bottom-nav-icon,
+  .nav-icon {
+    font-size: 22px;
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* Landscape mode on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .bottom-nav {
+    padding: 4px 0 max(4px, env(safe-area-inset-bottom));
+  }
+
+  .bottom-nav-item,
+  .nav-item {
+    min-height: 48px;
+    padding: 4px 2px;
+  }
+
+  .bottom-nav-label,
+  .nav-label {
+    font-size: 10px;
+  }
+
+  .bottom-nav-icon,
+  .nav-icon {
+    font-size: 20px;
+    width: 22px;
+    height: 22px;
+  }
+
+  body {
+    padding-bottom: 60px;
+  }
+
+  .support-btn {
+    bottom: max(70px, calc(70px + env(safe-area-inset-bottom)));
+  }
+}
