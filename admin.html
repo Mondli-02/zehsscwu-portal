@@ -815,7 +815,7 @@
   // Initialize Supabase
   const supabaseUrl = "https://wugbnnyyovblandiqqqp.supabase.co";
   const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1Z2Jubnl5b3ZibGFuZGlxcXFwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1OTc1MDU3NCwiZXhwIjoyMDc1MzI2NTc0fQ.yT7QgVyPkHZxyBBEnNUU8Mf4Q8tXbihhXc-sS7cQ3Fc";
-  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+  window.supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
   // Initialize admin dashboard when page loads
   document.addEventListener("DOMContentLoaded", function () {

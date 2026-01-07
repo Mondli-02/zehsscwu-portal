@@ -1,56 +1,60 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Backend Test</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Supabase Backend Test</h1>
     <div id="results"></div>
 
     <script>
-        const supabaseUrl = 'https://wugbnnyyovblandiqqqp.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1Z2Jubnl5b3ZibGFuZGlxcXFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NTA1NzQsImV4cCI6MjA3NTMyNjU3NH0.qSBW1y8vxKTKIKvFsk9O2mNCBaPyPJj6dSLzYmSJ_wE';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+      const supabaseUrl = "https://wugbnnyyovblandiqqqp.supabase.co";
+      const supabaseKey =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1Z2Jubnl5b3ZibGFuZGlxcXFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NTA1NzQsImV4cCI6MjA3NTMyNjU3NH0.qSBW1y8vxKTKIKvFsk9O2mNCBaPyPJj6dSLzYmSJ_wE";
+      const supabaseClient = window.supabase.createClient(
+        supabaseUrl,
+        supabaseKey
+      );
 
-        async function testBackend() {
-            const results = document.getElementById('results');
-            results.innerHTML = '<p>Testing connection...</p>';
+      async function testBackend() {
+        const results = document.getElementById("results");
+        results.innerHTML = "<p>Testing connection...</p>";
 
-            try {
-                // Test 1: Basic connection
-                const { data: authData, error: authError } = await supabase.auth.getSession();
-                if (authError) throw authError;
-                results.innerHTML += '<p>✅ Authentication service working</p>';
+        try {
+          // Test 1: Basic connection
+          const { data: authData, error: authError } =
+            await supabaseClient.auth.getSession();
+          if (authError) throw authError;
+          results.innerHTML += "<p>✅ Authentication service working</p>";
 
-                // Test 2: Database access
-                const { data: profiles, error: profilesError } = await supabase
-                    .from('profiles')
-                    .select('count');
-                
-                if (profilesError) throw profilesError;
-                results.innerHTML += '<p>✅ Database access working</p>';
+          // Test 2: Database access
+          const { data: profiles, error: profilesError } = await supabaseClient
+            .from("profiles")
+            .select("count");
 
-                // Test 3: RLS policies
-                const { data: institutions, error: institutionsError } = await supabase
-                    .from('institutions')
-                    .select('*')
-                    .limit(1);
-                
-                if (institutionsError) {
-                    results.innerHTML += '<p>✅ RLS policies working (access restricted as expected)</p>';
-                } else {
-                    results.innerHTML += '<p>✅ Can read institutions data</p>';
-                }
+          if (profilesError) throw profilesError;
+          results.innerHTML += "<p>✅ Database access working</p>";
 
-                results.innerHTML += '<p style="color: green; font-weight: bold;">🎉 All backend tests passed!</p>';
+          // Test 3: RLS policies
+          const { data: institutions, error: institutionsError } =
+            await supabaseClient.from("institutions").select("*").limit(1);
 
-            } catch (error) {
-                results.innerHTML += `<p style="color: red;">❌ Error: ${error.message}</p>`;
-            }
+          if (institutionsError) {
+            results.innerHTML +=
+              "<p>✅ RLS policies working (access restricted as expected)</p>";
+          } else {
+            results.innerHTML += "<p>✅ Can read institutions data</p>";
+          }
+
+          results.innerHTML +=
+            '<p style="color: green; font-weight: bold;">🎉 All backend tests passed!</p>';
+        } catch (error) {
+          results.innerHTML += `<p style="color: red;">❌ Error: ${error.message}</p>`;
         }
+      }
 
-        testBackend();
+      testBackend();
     </script>
-</body>
+  </body>
 </html>

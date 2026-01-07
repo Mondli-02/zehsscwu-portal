@@ -340,7 +340,7 @@
       const supabaseUrl = "https://wugbnnyyovblandiqqqp.supabase.co";
       const supabaseKey =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1Z2Jubnl5b3ZibGFuZGlxcXFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NTA1NzQsImV4cCI6MjA3NTMyNjU3NH0.qSBW1y8vxKTKIKvFsk9O2mNCBaPyPJj6dSLzYmSJ_wE";
-      const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+      window.supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
       // Initialize member dashboard when page loads
       document.addEventListener("DOMContentLoaded", function () {
