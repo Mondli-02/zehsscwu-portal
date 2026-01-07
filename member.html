@@ -37,9 +37,8 @@
 
     <!-- Main Content -->
     <div class="container" style="margin-top: 24px">
-      <!-- Tabs Navigation -->
+      <!-- Desktop Tabs Navigation (hidden on mobile) -->
       <div class="tabs">
-        <!-- Update the onclick handlers in member.html -->
         <div class="tab active" onclick="switchTab('profile', event)">
           Profile
         </div>
@@ -220,8 +219,7 @@
                 <small
                   style="color: var(--error); display: block; margin-top: 4px"
                 >
-                  You are not allowed to change this position. Contact the
-                  system administrator.
+                  Contact admin to change this position
                 </small>
               </div>
 
@@ -318,6 +316,61 @@
       </div>
     </div>
 
+    <!-- Mobile Bottom Navigation (visible only on mobile) -->
+    <nav class="bottom-nav">
+      <div
+        class="nav-item active"
+        onclick="switchTab('profile', event)"
+        data-tab="profile"
+      >
+        <svg class="nav-icon" viewBox="0 0 24 24">
+          <path
+            d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+          />
+        </svg>
+        <span class="nav-label">Profile</span>
+      </div>
+
+      <div
+        class="nav-item"
+        onclick="switchTab('worksCouncil', event)"
+        data-tab="worksCouncil"
+      >
+        <svg class="nav-icon" viewBox="0 0 24 24">
+          <path
+            d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"
+          />
+        </svg>
+        <span class="nav-label">Council</span>
+      </div>
+
+      <div
+        class="nav-item"
+        onclick="switchTab('updateProfile', event)"
+        data-tab="updateProfile"
+      >
+        <svg class="nav-icon" viewBox="0 0 24 24">
+          <path
+            d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+          />
+        </svg>
+        <span class="nav-label">Update</span>
+      </div>
+
+      <div
+        class="nav-item"
+        onclick="switchTab('unionTools', event)"
+        data-tab="unionTools"
+      >
+        <svg class="nav-icon" viewBox="0 0 24 24">
+          <path
+            d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"
+          />
+        </svg>
+        <span class="nav-label">Tools</span>
+      </div>
+    </nav>
+
     <!-- Support Button -->
     <div class="support-btn" onclick="contactSupport()">
       <span>Contact Support</span>
@@ -341,6 +394,59 @@
       const supabaseKey =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1Z2Jubnl5b3ZibGFuZGlxcXFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NTA1NzQsImV4cCI6MjA3NTMyNjU3NH0.qSBW1y8vxKTKIKvFsk9O2mNCBaPyPJj6dSLzYmSJ_wE";
       window.supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+      // Enhanced switchTab function to update both desktop tabs and mobile bottom nav
+      function switchTab(tabName, event) {
+        // Prevent default if event exists
+        if (event) {
+          event.preventDefault();
+        }
+
+        // Hide all tab contents
+        const tabContents = document.querySelectorAll(".tab-content");
+        tabContents.forEach((content) => {
+          content.classList.remove("active");
+        });
+
+        // Remove active class from all desktop tabs
+        const desktopTabs = document.querySelectorAll(".tabs .tab");
+        desktopTabs.forEach((tab) => {
+          tab.classList.remove("active");
+        });
+
+        // Remove active class from all mobile bottom nav items
+        const bottomNavItems = document.querySelectorAll(
+          ".bottom-nav-item, .nav-item"
+        );
+        bottomNavItems.forEach((item) => {
+          item.classList.remove("active");
+        });
+
+        // Show the selected tab content
+        const selectedTabContent = document.getElementById(tabName);
+        if (selectedTabContent) {
+          selectedTabContent.classList.add("active");
+        }
+
+        // Add active class to the corresponding desktop tab
+        const desktopTabElement = event?.currentTarget
+          ?.closest(".tabs")
+          ?.querySelector(`.tab[onclick*="${tabName}"]`);
+        if (desktopTabElement) {
+          desktopTabElement.classList.add("active");
+        }
+
+        // Add active class to the corresponding mobile bottom nav item
+        const bottomNavItem = document.querySelector(
+          `.bottom-nav-item[data-tab="${tabName}"], .nav-item[data-tab="${tabName}"]`
+        );
+        if (bottomNavItem) {
+          bottomNavItem.classList.add("active");
+        }
+
+        // Scroll to top smoothly
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
 
       // Initialize member dashboard when page loads
       document.addEventListener("DOMContentLoaded", function () {
